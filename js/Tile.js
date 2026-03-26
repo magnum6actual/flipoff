@@ -111,7 +111,8 @@ export class Tile {
       soundEvents.push({
         at: elapsed + (duration * 0.55),
         intensity: i === path.length - 1 ? 1.15 : 1,
-        pan: this._getSoundPan()
+        pan: this._getSoundPan(),
+        isFinal: i === path.length - 1
       });
 
       elapsed += duration + FLIP_SETTLE_DURATION;

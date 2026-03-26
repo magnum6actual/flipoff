@@ -9,6 +9,14 @@ export class SoundEngine {
     this._audioBuffer = null;
     this._activeSources = new Set();
     this._tickSlices = [];
+    this._jokeBuffers = {
+      squeak: null,
+      fart: null
+    };
+    this._jokeSlices = {
+      squeak: [],
+      fart: []
+    };
     this._masterInput = null;
     this._masterOutput = null;
   }
@@ -26,8 +34,18 @@ export class SoundEngine {
       for (let i = 0; i < binaryStr.length; i++) {
         bytes[i] = binaryStr.charCodeAt(i);
       }
-      this._audioBuffer = await this.ctx.decodeAudioData(bytes.buffer);
+      const [mainBuffer, squeakBuffer, fartBuffer] = await Promise.all([
+        this.ctx.decodeAudioData(bytes.buffer),
+        this._loadExternalAudioBuffer(new URL('../ass-ets/audio/mixkit-rubber-duck-squeak-1014.wav', import.meta.url)),
+        this._loadExternalAudioBuffer(new URL('../ass-ets/audio/farrrt.wav', import.meta.url))
+      ]);
+
+      this._audioBuffer = mainBuffer;
       this._tickSlices = this._extractTickSlices(this._audioBuffer);
+      this._jokeBuffers.squeak = squeakBuffer;
+      this._jokeBuffers.fart = fartBuffer;
+      this._jokeSlices.squeak = this._extractJokeSlices(squeakBuffer, 0.14);
+      this._jokeSlices.fart = this._extractJokeSlices(fartBuffer, 0.24);
     } catch (e) {
       console.warn('Failed to decode flap audio:', e);
     }
@@ -49,7 +67,7 @@ export class SoundEngine {
   }
 
   setSoundProfile(profile) {
-    this.soundProfile = profile === 'authentic' ? 'authentic' : 'soft';
+    this.soundProfile = ['soft', 'authentic', 'joke'].includes(profile) ? profile : 'soft';
     this._emitSoundModeChange();
   }
 
@@ -59,6 +77,8 @@ export class SoundEngine {
       this.soundProfile = 'soft';
     } else if (this.soundProfile === 'soft') {
       this.soundProfile = 'authentic';
+    } else if (this.soundProfile === 'authentic') {
+      this.soundProfile = 'joke';
     } else {
       this.muted = true;
       this._stopActiveSources();
@@ -74,7 +94,13 @@ export class SoundEngine {
       muted: this.muted,
       profile: this.soundProfile,
       mode: this.muted ? 'mute' : this.soundProfile,
-      label: this.muted ? 'Mute' : (this.soundProfile === 'authentic' ? 'Authentic' : 'Soft')
+      label: this.muted
+        ? 'Mute'
+        : ({
+          soft: 'Soft',
+          authentic: 'Authentic',
+          joke: 'Joke'
+        }[this.soundProfile] || 'Soft')
     };
   }
 
@@ -90,6 +116,11 @@ export class SoundEngine {
 
     const baseTime = this.ctx.currentTime + 0.015;
     const clusteredEvents = this._clusterSoundEvents(soundEvents);
+
+    if (this.soundProfile === 'joke' && this._jokeSlices.squeak.length > 0) {
+      this._playJokeTransition(clusteredEvents, baseTime);
+      return;
+    }
 
     clusteredEvents.forEach((event, index) => {
       this._playTickCluster(event, baseTime, index);
@@ -112,6 +143,7 @@ export class SoundEngine {
   _playFallbackTransition() {
     this._playSlice({
       when: this.ctx.currentTime,
+      buffer: this._audioBuffer,
       offset: 0,
       duration: this._audioBuffer.duration,
       gainValue: this.soundProfile === 'soft' ? 0.42 : 0.75,
@@ -136,6 +168,7 @@ export class SoundEngine {
 
       this._playSlice({
         when: baseTime + (timeOffset / 1000),
+        buffer: this._audioBuffer,
         offset: slice.offset,
         duration: slice.duration,
         gainValue,
@@ -145,15 +178,59 @@ export class SoundEngine {
     }
   }
 
-  _playSlice({ when, offset, duration, gainValue, playbackRate, panValue }) {
+  _playJokeTransition(clusteredEvents, baseTime) {
+    const lastIndex = clusteredEvents.length - 1;
+
+    clusteredEvents.forEach((event, index) => {
+      const slice = this._jokeSlices.squeak[index % this._jokeSlices.squeak.length];
+      const isBigFinish = index === lastIndex && event.hasFinal && (
+        event.density >= 3 || clusteredEvents.length >= 8
+      );
+      const playbackRate = 0.9 + ((index % 4) * 0.03);
+      const gainValue = Math.min(0.34, 0.14 + (event.density * 0.03));
+      const panValue = Math.max(-0.42, Math.min(0.42, event.pan));
+
+      this._playSlice({
+        when: baseTime + (event.at / 1000),
+        buffer: this._jokeBuffers.squeak,
+        offset: slice.offset,
+        duration: slice.duration,
+        gainValue,
+        playbackRate,
+        panValue,
+        attackMs: 4,
+        releaseMs: 70
+      });
+
+      if (isBigFinish && this._jokeSlices.fart.length > 0 && this._jokeBuffers.fart) {
+        const fartSlice = this._jokeSlices.fart[index % this._jokeSlices.fart.length];
+
+        this._playSlice({
+          when: baseTime + ((event.at + 70) / 1000),
+          buffer: this._jokeBuffers.fart,
+          offset: fartSlice.offset,
+          duration: fartSlice.duration,
+          gainValue: 0.22,
+          playbackRate: 0.95,
+          panValue: 0,
+          attackMs: 8,
+          releaseMs: 120
+        });
+      }
+    });
+  }
+
+  _playSlice({ when, buffer, offset, duration, gainValue, playbackRate, panValue, attackMs = null, releaseMs = null }) {
+    if (!buffer) return;
+
     const source = this.ctx.createBufferSource();
-    source.buffer = this._audioBuffer;
+    source.buffer = buffer;
     source.playbackRate.value = playbackRate;
 
     const gain = this.ctx.createGain();
     const profile = this._getProfileSettings();
-    const attack = profile.attackMs / 1000;
-    const release = profile.releaseMs / 1000;
+    const attack = (attackMs ?? profile.attackMs) / 1000;
+    const release = (releaseMs ?? profile.releaseMs) / 1000;
     const safeDuration = Math.max(duration, attack + release + 0.01);
 
     gain.gain.setValueAtTime(0.0001, when);
@@ -207,6 +284,7 @@ export class SoundEngine {
         lastEvent.at = ((lastEvent.at * lastEvent.density) + event.at) / nextDensity;
         lastEvent.intensity = Math.max(lastEvent.intensity, event.intensity);
         lastEvent.pan = ((lastEvent.pan * lastEvent.density) + event.pan) / nextDensity;
+        lastEvent.hasFinal = lastEvent.hasFinal || Boolean(event.isFinal);
         lastEvent.density = nextDensity;
         continue;
       }
@@ -215,6 +293,7 @@ export class SoundEngine {
         at: event.at,
         intensity: event.intensity,
         pan: event.pan,
+        hasFinal: Boolean(event.isFinal),
         density: 1
       });
     }
@@ -291,6 +370,41 @@ export class SoundEngine {
       }));
   }
 
+  _extractJokeSlices(buffer, duration) {
+    if (!buffer) return [];
+
+    const slices = this._extractTickSlices(buffer)
+      .map((slice) => ({
+        offset: slice.offset,
+        duration: Math.min(duration, buffer.duration - slice.offset)
+      }))
+      .filter((slice) => slice.duration > 0.05);
+
+    if (slices.length > 0) {
+      return slices;
+    }
+
+    return [{
+      offset: 0,
+      duration: Math.min(duration, buffer.duration)
+    }];
+  }
+
+  async _loadExternalAudioBuffer(url) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${url}`);
+      }
+
+      const data = await response.arrayBuffer();
+      return await this.ctx.decodeAudioData(data);
+    } catch (error) {
+      console.warn('Failed to load external audio buffer:', url.toString(), error);
+      return null;
+    }
+  }
+
   _setupMasterChain() {
     if (!this.ctx || this._masterInput) return;
 
@@ -343,6 +457,25 @@ export class SoundEngine {
         maxPan: 0.6,
         attackMs: 2,
         releaseMs: 18
+      };
+    }
+
+    if (this.soundProfile === 'joke') {
+      return {
+        maxRepetitions: 1,
+        densityDivisor: 3,
+        repeatSpacingMs: 16,
+        baseGain: 0.12,
+        intensityGain: 0.08,
+        densityGain: 0.03,
+        repeatDecay: 0.02,
+        maxGain: 0.3,
+        basePlaybackRate: 0.92,
+        playbackStep: 0.02,
+        panSpread: 0.04,
+        maxPan: 0.42,
+        attackMs: 4,
+        releaseMs: 65
       };
     }
 
