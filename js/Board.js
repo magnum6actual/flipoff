@@ -1,7 +1,6 @@
 import { Tile } from './Tile.js';
 import {
-  GRID_COLS, GRID_ROWS, STAGGER_DELAY, SCRAMBLE_DURATION,
-  TOTAL_TRANSITION, ACCENT_COLORS
+  GRID_COLS, GRID_ROWS, STAGGER_DELAY, ACCENT_COLORS
 } from './constants.js';
 
 export class Board {
@@ -96,7 +95,7 @@ export class Board {
   }
 
   displayMessage(lines) {
-    if (this.isTransitioning) return;
+    if (this.isTransitioning) return null;
     this.isTransitioning = true;
 
     // Format lines into grid
@@ -104,6 +103,7 @@ export class Board {
 
     // Determine which tiles need to change
     let hasChanges = false;
+    const animations = [];
 
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
@@ -112,7 +112,7 @@ export class Board {
 
         if (newChar !== oldChar) {
           const delay = (r * this.cols + c) * STAGGER_DELAY;
-          this.tiles[r][c].scrambleTo(newChar, delay);
+          animations.push(this.tiles[r][c].flipTo(newChar, delay));
           hasChanges = true;
         }
       }
@@ -127,13 +127,17 @@ export class Board {
     this.accentIndex++;
     this._updateAccentColors();
 
-    // Update grid state
-    this.currentGrid = newGrid;
-
-    // Clear transitioning flag after animation completes
-    setTimeout(() => {
+    if (!hasChanges) {
+      this.currentGrid = newGrid;
       this.isTransitioning = false;
-    }, TOTAL_TRANSITION + 200);
+      return Promise.resolve(false);
+    }
+
+    return Promise.allSettled(animations).then(() => {
+      this.currentGrid = newGrid;
+      this.isTransitioning = false;
+      return true;
+    });
   }
 
   _formatToGrid(lines) {

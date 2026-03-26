@@ -1,4 +1,4 @@
-import { MESSAGES, MESSAGE_INTERVAL, TOTAL_TRANSITION } from './constants.js';
+import { MESSAGES, MESSAGE_INTERVAL } from './constants.js';
 
 export class MessageRotator {
   constructor(board) {
@@ -7,48 +7,67 @@ export class MessageRotator {
     this.currentIndex = -1;
     this._timer = null;
     this._paused = false;
+    this._running = false;
+    this._scheduleVersion = 0;
   }
 
   start() {
-    // Show first message immediately
+    this._running = true;
     this.next();
-
-    // Begin auto-rotation
-    this._timer = setInterval(() => {
-      if (!this._paused && !this.board.isTransitioning) {
-        this.next();
-      }
-    }, MESSAGE_INTERVAL + TOTAL_TRANSITION);
   }
 
   stop() {
+    this._running = false;
     if (this._timer) {
-      clearInterval(this._timer);
+      clearTimeout(this._timer);
       this._timer = null;
     }
   }
 
   next() {
-    this.currentIndex = (this.currentIndex + 1) % this.messages.length;
-    this.board.displayMessage(this.messages[this.currentIndex]);
-    this._resetAutoRotation();
+    this._showMessage(1);
   }
 
   prev() {
-    this.currentIndex = (this.currentIndex - 1 + this.messages.length) % this.messages.length;
-    this.board.displayMessage(this.messages[this.currentIndex]);
-    this._resetAutoRotation();
+    this._showMessage(-1);
   }
 
-  _resetAutoRotation() {
-    // Reset timer when user manually navigates
+  _showMessage(direction) {
+    if (this.board.isTransitioning || this.messages.length === 0) {
+      return false;
+    }
+
+    const nextIndex = (this.currentIndex + direction + this.messages.length) % this.messages.length;
+    const transition = this.board.displayMessage(this.messages[nextIndex]);
+
+    if (!transition) {
+      return false;
+    }
+
+    this.currentIndex = nextIndex;
+    this._scheduleAfterTransition(transition);
+    return true;
+  }
+
+  _scheduleAfterTransition(transition) {
+    this._scheduleVersion += 1;
+    const scheduleVersion = this._scheduleVersion;
+
     if (this._timer) {
-      clearInterval(this._timer);
-      this._timer = setInterval(() => {
-        if (!this._paused && !this.board.isTransitioning) {
+      clearTimeout(this._timer);
+      this._timer = null;
+    }
+
+    Promise.resolve(transition).finally(() => {
+      if (!this._running || this._paused || scheduleVersion !== this._scheduleVersion) {
+        return;
+      }
+
+      this._timer = setTimeout(() => {
+        if (!this._paused) {
           this.next();
         }
-      }, MESSAGE_INTERVAL + TOTAL_TRANSITION);
-    }
+      }, MESSAGE_INTERVAL);
+    });
   }
 }

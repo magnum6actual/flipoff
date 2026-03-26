@@ -78,8 +78,8 @@ flipoff/
 Edit `js/constants.js` to change:
 - **Messages**: Add your own quotes or text
 - **Grid size**: Adjust `GRID_COLS` and `GRID_ROWS`
-- **Timing**: Tweak `SCRAMBLE_DURATION`, `STAGGER_DELAY`, etc.
-- **Colors**: Modify `SCRAMBLE_COLORS` and `ACCENT_COLORS`
+- **Timing**: Tweak `FLIP_STEP_DURATION`, `STAGGER_DELAY`, etc.
+- **Colors**: Modify `ACCENT_COLORS`
 
 ## License
 
