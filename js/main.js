@@ -28,11 +28,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Volume toggle button in header
   const volumeBtn = document.getElementById('volume-btn');
+  const syncSoundUi = () => {
+    if (!volumeBtn || !soundEngine.getSoundState) return;
+    const state = soundEngine.getSoundState();
+    volumeBtn.classList.toggle('muted', state.muted);
+    volumeBtn.title = `Sound mode: ${state.label}`;
+  };
+
+  document.addEventListener('soundmodechange', syncSoundUi);
+  syncSoundUi();
+
   if (volumeBtn) {
     volumeBtn.addEventListener('click', () => {
       initAudio();
-      const muted = soundEngine.toggleMute();
-      volumeBtn.classList.toggle('muted', muted);
+      soundEngine.toggleMute();
     });
   }
 

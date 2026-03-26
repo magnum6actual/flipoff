@@ -1,7 +1,6 @@
 import { Tile } from './Tile.js';
 import {
-  GRID_COLS, GRID_ROWS, STAGGER_DELAY, SCRAMBLE_DURATION,
-  TOTAL_TRANSITION, ACCENT_COLORS
+  GRID_COLS, GRID_ROWS, STAGGER_DELAY, ACCENT_COLORS
 } from './constants.js';
 
 export class Board {
@@ -32,7 +31,7 @@ export class Board {
       const row = [];
       const charRow = [];
       for (let c = 0; c < this.cols; c++) {
-        const tile = new Tile(r, c);
+        const tile = new Tile(r, c, this.cols);
         tile.setChar(' ');
         this.gridEl.appendChild(tile.el);
         row.push(tile);
@@ -60,16 +59,19 @@ export class Board {
     });
     this.boardEl.appendChild(hint);
 
-    // Shortcuts overlay
     const overlay = document.createElement('div');
     overlay.className = 'shortcuts-overlay';
     overlay.innerHTML = `
       <div><span>Next message</span><kbd>Enter</kbd></div>
       <div><span>Previous</span><kbd>\u2190</kbd></div>
       <div><span>Fullscreen</span><kbd>F</kbd></div>
-      <div><span>Mute</span><kbd>M</kbd></div>
+      <div><span>Sound: <strong class="shortcut-sound-mode">Soft</strong></span><kbd>M</kbd></div>
     `;
     this.boardEl.appendChild(overlay);
+
+    this.shortcutSoundModeEl = overlay.querySelector('.shortcut-sound-mode');
+    this._syncSoundShortcutLabel();
+    document.addEventListener('soundmodechange', () => this._syncSoundShortcutLabel());
 
     containerEl.appendChild(this.boardEl);
     this._updateAccentColors();
@@ -95,8 +97,14 @@ export class Board {
     });
   }
 
+  _syncSoundShortcutLabel() {
+    if (!this.shortcutSoundModeEl || !this.soundEngine || !this.soundEngine.getSoundState) return;
+    const state = this.soundEngine.getSoundState();
+    this.shortcutSoundModeEl.textContent = state.label;
+  }
+
   displayMessage(lines) {
-    if (this.isTransitioning) return;
+    if (this.isTransitioning) return null;
     this.isTransitioning = true;
 
     // Format lines into grid
@@ -104,6 +112,8 @@ export class Board {
 
     // Determine which tiles need to change
     let hasChanges = false;
+    const animations = [];
+    const soundEvents = [];
 
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
@@ -112,28 +122,38 @@ export class Board {
 
         if (newChar !== oldChar) {
           const delay = (r * this.cols + c) * STAGGER_DELAY;
-          this.tiles[r][c].scrambleTo(newChar, delay);
+          const tile = this.tiles[r][c];
+          const plan = tile.getTransitionPlan(newChar, delay);
+
+          if (!plan) continue;
+
+          animations.push(tile.flipTo(newChar, delay, plan));
+          soundEvents.push(...plan.soundEvents);
           hasChanges = true;
         }
       }
     }
 
-    // Play the single transition audio clip once
+    // Play flap sounds timed to the visible flips.
     if (hasChanges && this.soundEngine) {
-      this.soundEngine.playTransition();
+      this.soundEngine.playTransition(soundEvents);
     }
 
     // Update accent bar colors
     this.accentIndex++;
     this._updateAccentColors();
 
-    // Update grid state
-    this.currentGrid = newGrid;
-
-    // Clear transitioning flag after animation completes
-    setTimeout(() => {
+    if (!hasChanges) {
+      this.currentGrid = newGrid;
       this.isTransitioning = false;
-    }, TOTAL_TRANSITION + 200);
+      return Promise.resolve(false);
+    }
+
+    return Promise.allSettled(animations).then(() => {
+      this.currentGrid = newGrid;
+      this.isTransitioning = false;
+      return true;
+    });
   }
 
   _formatToGrid(lines) {
