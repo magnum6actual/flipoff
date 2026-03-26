@@ -37,8 +37,8 @@ export class KeyboardController {
       case 'M':
         e.preventDefault();
         if (this.soundEngine) {
-          const muted = this.soundEngine.toggleMute();
-          this._showToast(muted ? 'Sound off' : 'Sound on');
+          const state = this.soundEngine.cycleSoundMode();
+          this._showToast(state.label);
         }
         break;
 

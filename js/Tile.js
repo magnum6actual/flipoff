@@ -8,9 +8,10 @@ import {
 } from './constants.js';
 
 export class Tile {
-  constructor(row, col) {
+  constructor(row, col, boardCols = 22) {
     this.row = row;
     this.col = col;
+    this.boardCols = boardCols;
     this.currentChar = ' ';
     this.isAnimating = false;
     this._timeouts = new Set();
@@ -65,8 +66,9 @@ export class Tile {
     this.el.style.removeProperty('--flip-duration');
   }
 
-  async flipTo(targetChar, delay = 0) {
-    if (targetChar === this.currentChar) return;
+  async flipTo(targetChar, delay = 0, transitionPlan = null) {
+    const plan = transitionPlan || this.getTransitionPlan(targetChar, delay);
+    if (!plan) return;
 
     this._runId += 1;
     const runId = this._runId;
@@ -76,19 +78,51 @@ export class Tile {
     this.isAnimating = true;
 
     try {
-      if (delay > 0) {
-        await this._wait(delay, runId);
+      if (plan.delay > 0) {
+        await this._wait(plan.delay, runId);
       }
 
-      const path = this._buildVisiblePath(targetChar);
-      for (let i = 0; i < path.length; i++) {
-        await this._flipStep(path[i], i, path.length, runId);
+      for (const step of plan.steps) {
+        await this._flipStep(step.char, step.duration, runId);
       }
     } finally {
       if (runId === this._runId) {
         this.isAnimating = false;
       }
     }
+  }
+
+  getTransitionPlan(targetChar, delay = 0) {
+    if (targetChar === this.currentChar) return null;
+
+    const path = this._buildVisiblePath(targetChar);
+    const steps = [];
+    const soundEvents = [];
+    let elapsed = delay;
+
+    for (let i = 0; i < path.length; i++) {
+      const duration = this._getStepDuration(i, path.length);
+      steps.push({
+        at: elapsed,
+        char: path[i],
+        duration
+      });
+
+      soundEvents.push({
+        at: elapsed + (duration * 0.55),
+        intensity: i === path.length - 1 ? 1.15 : 1,
+        pan: this._getSoundPan()
+      });
+
+      elapsed += duration + FLIP_SETTLE_DURATION;
+    }
+
+    return {
+      delay,
+      steps,
+      soundEvents,
+      totalDuration: elapsed
+    };
   }
 
   _buildVisiblePath(targetChar) {
@@ -129,12 +163,20 @@ export class Tile {
     return index === -1 ? CHARSET.length - 1 : index;
   }
 
-  async _flipStep(nextChar, stepIndex, totalSteps, runId) {
-    this._ensureRun(runId);
-
+  _getStepDuration(stepIndex, totalSteps) {
     const duration = totalSteps > 5 ? FLIP_STEP_FAST_DURATION : FLIP_STEP_DURATION;
     const jitter = ((this.row + this.col + stepIndex) % 3) * 10;
-    const flipDuration = duration + jitter;
+    return duration + jitter;
+  }
+
+  _getSoundPan() {
+    if (this.boardCols <= 1) return 0;
+    const normalized = this.col / (this.boardCols - 1);
+    return (normalized * 2 - 1) * 0.35;
+  }
+
+  async _flipStep(nextChar, flipDuration, runId) {
+    this._ensureRun(runId);
 
     this.el.style.setProperty('--flip-duration', `${flipDuration}ms`);
     this._setStaticChar(this.currentChar);
