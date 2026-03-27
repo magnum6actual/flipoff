@@ -1,0 +1,6 @@
+.git
+.gitignore
+README.md
+screenshot.png
+Dockerfile
+.dockerignore
