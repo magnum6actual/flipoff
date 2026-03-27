@@ -1,7 +1,8 @@
 export class KeyboardController {
-  constructor(rotator, soundEngine) {
+  constructor(rotator, soundEngine, board) {
     this.rotator = rotator;
     this.soundEngine = soundEngine;
+    this.board = board;
 
     document.addEventListener('keydown', (e) => this._handleKey(e));
   }
@@ -39,6 +40,23 @@ export class KeyboardController {
         if (this.soundEngine) {
           const muted = this.soundEngine.toggleMute();
           this._showToast(muted ? 'Sound off' : 'Sound on');
+        }
+        break;
+
+      case 'r':
+      case 'R':
+        e.preventDefault();
+        const randomOn = this.rotator.toggleRandom();
+        this._showToast(randomOn ? 'Random on' : 'Random off');
+        break;
+
+      case 'c':
+      case 'C':
+        e.preventDefault();
+        if (this.board) {
+          const mode = this.board.cycleMode();
+          const labels = { color: 'Color mode', matrix: 'Matrix mode', grayscale: 'Grayscale mode' };
+          this._showToast(labels[mode]);
         }
         break;
 

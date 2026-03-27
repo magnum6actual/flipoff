@@ -7,9 +7,13 @@ export class MessageRotator {
     this.currentIndex = -1;
     this._timer = null;
     this._paused = false;
+    this.randomMode = false;
   }
 
   start() {
+    // Shuffle messages on load
+    this._shuffle();
+
     // Show first message immediately
     this.next();
 
@@ -29,7 +33,16 @@ export class MessageRotator {
   }
 
   next() {
-    this.currentIndex = (this.currentIndex + 1) % this.messages.length;
+    if (this.randomMode) {
+      let idx;
+      do {
+        idx = Math.floor(Math.random() * this.messages.length);
+      } while (idx === this.currentIndex && this.messages.length > 1);
+      this.currentIndex = idx;
+    } else {
+      this.currentIndex = (this.currentIndex + 1) % this.messages.length;
+      if (this.currentIndex === 0) this._shuffleInPlace();
+    }
     this.board.displayMessage(this.messages[this.currentIndex]);
     this._resetAutoRotation();
   }
@@ -38,6 +51,28 @@ export class MessageRotator {
     this.currentIndex = (this.currentIndex - 1 + this.messages.length) % this.messages.length;
     this.board.displayMessage(this.messages[this.currentIndex]);
     this._resetAutoRotation();
+  }
+
+  toggleRandom() {
+    this.randomMode = !this.randomMode;
+    return this.randomMode;
+  }
+
+  _shuffle() {
+    // Fisher-Yates shuffle, reset index for fresh start
+    for (let i = this.messages.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.messages[i], this.messages[j]] = [this.messages[j], this.messages[i]];
+    }
+    this.currentIndex = -1;
+  }
+
+  _shuffleInPlace() {
+    // Fisher-Yates shuffle without touching currentIndex
+    for (let i = this.messages.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.messages[i], this.messages[j]] = [this.messages[j], this.messages[i]];
+    }
   }
 
   _resetAutoRotation() {

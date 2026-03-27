@@ -1,4 +1,8 @@
-import { CHARSET, SCRAMBLE_COLORS, SCRAMBLE_DURATION, FLIP_DURATION } from './constants.js';
+import {
+  CHARSET, MATRIX_CHARSET,
+  SCRAMBLE_COLORS, MATRIX_COLORS, GRAYSCALE_COLORS,
+  SCRAMBLE_DURATION, FLIP_DURATION
+} from './constants.js';
 
 export class Tile {
   constructor(row, col) {
@@ -35,38 +39,64 @@ export class Tile {
     this.frontSpan.textContent = char === ' ' ? '' : char;
     this.backSpan.textContent = '';
     this.frontEl.style.backgroundColor = '';
+    this.frontSpan.style.color = '';
+    this.frontSpan.style.fontFamily = '';
   }
 
-  scrambleTo(targetChar, delay) {
+  scrambleTo(targetChar, delay, mode = 'color') {
     if (targetChar === this.currentChar) return;
 
-    // Cancel any in-progress animation
     if (this._scrambleTimer) {
       clearInterval(this._scrambleTimer);
       this._scrambleTimer = null;
     }
     this.isAnimating = true;
 
+    // Pick charset and colors based on mode
+    const isMatrix = mode === 'matrix';
+    const isGray = mode === 'grayscale';
+    const charset = isMatrix ? MATRIX_CHARSET : CHARSET;
+    const colors = isMatrix ? MATRIX_COLORS : isGray ? GRAYSCALE_COLORS : SCRAMBLE_COLORS;
+
     setTimeout(() => {
       this.el.classList.add('scrambling');
+
+      // Matrix mode: set monospace font for katakana
+      if (isMatrix) {
+        this.frontSpan.style.fontFamily = '"Courier New", monospace';
+        this.frontSpan.style.color = '#00FF41';
+      }
+
       let scrambleCount = 0;
       const maxScrambles = 10 + Math.floor(Math.random() * 4);
       const scrambleInterval = 70;
 
       this._scrambleTimer = setInterval(() => {
-        // Random character
-        const randChar = CHARSET[Math.floor(Math.random() * CHARSET.length)];
+        const randChar = charset[Math.floor(Math.random() * charset.length)];
         this.frontSpan.textContent = randChar === ' ' ? '' : randChar;
 
-        // Cycle background color
-        const color = SCRAMBLE_COLORS[scrambleCount % SCRAMBLE_COLORS.length];
-        this.frontEl.style.backgroundColor = color;
-
-        // Briefly change text color for contrast on light backgrounds
-        if (color === '#FFFFFF' || color === '#FFCC00') {
-          this.frontSpan.style.color = '#111';
+        if (isGray) {
+          // Grayscale: no background, just flicker text brightness
+          const grayShade = colors[scrambleCount % colors.length];
+          this.frontSpan.style.color = grayShade;
+          this.frontSpan.style.fontFamily = '';
         } else {
-          this.frontSpan.style.color = '';
+          // Color or matrix: tint background
+          const color = colors[scrambleCount % colors.length];
+          this.frontEl.style.backgroundColor = color;
+
+          if (isMatrix) {
+            // Matrix: always green text, darker bg on dim frames
+            this.frontSpan.style.color = color === '#003B00' ? '#00FF41' : '#00FF41';
+            this.frontSpan.style.fontFamily = '"Courier New", monospace';
+          } else {
+            // Color mode: contrast text on light backgrounds
+            if (color === '#FFFFFF' || color === '#FFCC00') {
+              this.frontSpan.style.color = '#111';
+            } else {
+              this.frontSpan.style.color = '';
+            }
+          }
         }
 
         scrambleCount++;
@@ -75,15 +105,15 @@ export class Tile {
           clearInterval(this._scrambleTimer);
           this._scrambleTimer = null;
 
-          // Reset colors
+          // Reset all styling
           this.frontEl.style.backgroundColor = '';
           this.frontSpan.style.color = '';
+          this.frontSpan.style.fontFamily = '';
 
-          // Set the final character directly (skip 3D flip for reliability)
-          // Use a brief opacity flash to simulate the flip settle
+          // Set final character (back to normal latin)
           this.frontSpan.textContent = targetChar === ' ' ? '' : targetChar;
 
-          // Quick flash effect: brief scale transform
+          // Brief tilt settle
           this.innerEl.style.transition = `transform ${FLIP_DURATION}ms ease-in-out`;
           this.innerEl.style.transform = 'perspective(400px) rotateX(-8deg)';
 
