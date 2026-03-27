@@ -1,0 +1,66 @@
+{
+  "grid": {
+    "cols": 22,
+    "rows": 5
+  },
+  "timing": {
+    "scrambleDuration": 800,
+    "flipDuration": 300,
+    "staggerDelay": 25,
+    "totalTransition": 3800,
+    "messageInterval": 4000
+  },
+  "charset": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-!?'/: ",
+  "scrambleColors": [
+    "#00AAFF", "#00FFCC", "#AA00FF",
+    "#FF2D00", "#FFCC00", "#FFFFFF"
+  ],
+  "accentColors": [
+    "#00FF7F", "#FF4D00", "#AA00FF",
+    "#00AAFF", "#00FFCC"
+  ],
+  "messages": [
+    [
+      "",
+      "GOD IS IN",
+      "THE DETAILS .",
+      "- LUDWIG MIES",
+      ""
+    ],
+    [
+      "",
+      "STAY HUNGRY",
+      "STAY FOOLISH",
+      "- STEVE JOBS",
+      ""
+    ],
+    [
+      "",
+      "GOOD DESIGN IS",
+      "GOOD BUSINESS",
+      "- THOMAS WATSON",
+      ""
+    ],
+    [
+      "",
+      "LESS IS MORE",
+      "",
+      "- MIES VAN DER ROHE",
+      ""
+    ],
+    [
+      "",
+      "MAKE IT SIMPLE",
+      "BUT SIGNIFICANT",
+      "- DON DRAPER",
+      ""
+    ],
+    [
+      "",
+      "HAVE NO FEAR OF",
+      "PERFECTION",
+      "- SALVADOR DALI",
+      ""
+    ]
+  ]
+}

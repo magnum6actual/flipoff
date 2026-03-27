@@ -1,0 +1,7 @@
+services:
+  flipoff:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./config.json:/usr/share/nginx/html/config.json:ro
