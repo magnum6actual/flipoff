@@ -1,15 +1,17 @@
 import { Tile } from './Tile.js';
 import {
-  GRID_COLS, GRID_ROWS, STAGGER_DELAY, SCRAMBLE_DURATION,
+  DEFAULT_GRID_COLS, DEFAULT_GRID_ROWS, STAGGER_DELAY,
   TOTAL_TRANSITION, ACCENT_COLORS
 } from './constants.js';
 
 export class Board {
-  constructor(containerEl, soundEngine) {
-    this.cols = GRID_COLS;
-    this.rows = GRID_ROWS;
+  constructor(containerEl, soundEngine, config = {}) {
+    this.cols = Number(config.cols) || DEFAULT_GRID_COLS;
+    this.rows = Number(config.rows) || DEFAULT_GRID_ROWS;
     this.soundEngine = soundEngine;
     this.isTransitioning = false;
+    this.pendingLines = null;
+    this.transitionTimer = null;
     this.tiles = [];
     this.currentGrid = [];
     this.accentIndex = 0;
@@ -95,9 +97,13 @@ export class Board {
     });
   }
 
-  displayMessage(lines) {
-    if (this.isTransitioning) return;
-    this.isTransitioning = true;
+  displayMessage(lines, { interrupt = false } = {}) {
+    if (interrupt) {
+      this.interruptTransition();
+    } else if (this.isTransitioning) {
+      this.pendingLines = [...lines];
+      return;
+    }
 
     // Format lines into grid
     const newGrid = this._formatToGrid(lines);
@@ -118,6 +124,12 @@ export class Board {
       }
     }
 
+    if (!hasChanges) {
+      return;
+    }
+
+    this.isTransitioning = true;
+
     // Play the single transition audio clip once
     if (hasChanges && this.soundEngine) {
       this.soundEngine.playTransition();
@@ -131,9 +143,33 @@ export class Board {
     this.currentGrid = newGrid;
 
     // Clear transitioning flag after animation completes
-    setTimeout(() => {
+    window.clearTimeout(this.transitionTimer);
+    this.transitionTimer = window.setTimeout(() => {
       this.isTransitioning = false;
+      if (this.pendingLines) {
+        const nextLines = this.pendingLines;
+        this.pendingLines = null;
+        this.displayMessage(nextLines);
+      }
     }, TOTAL_TRANSITION + 200);
+  }
+
+  interruptTransition() {
+    if (this.transitionTimer) {
+      window.clearTimeout(this.transitionTimer);
+      this.transitionTimer = null;
+    }
+
+    this.pendingLines = null;
+    this.isTransitioning = false;
+
+    for (const row of this.tiles) {
+      for (const tile of row) {
+        tile.cancelAnimation();
+      }
+    }
+
+    this.currentGrid = this.tiles.map((row) => row.map((tile) => tile.currentChar));
   }
 
   _formatToGrid(lines) {

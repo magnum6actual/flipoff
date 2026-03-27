@@ -1,0 +1,35 @@
+# Opt-in plugin tree:
+# ignore everything by default, then explicitly allow the current plugin files.
+*
+!.gitignore
+
+!__init__.py
+!base.py
+
+!api_ninjas/
+api_ninjas/*
+!api_ninjas/__init__.py
+!api_ninjas/crypto_prices.py
+!api_ninjas/quote_of_the_day.py
+!api_ninjas/random_quote.py
+
+!api_ninjas/lib/
+api_ninjas/lib/*
+!api_ninjas/lib/__init__.py
+!api_ninjas/lib/common.py
+
+!github/
+github/*
+!github/__init__.py
+!github/open_work.py
+!github/repo_stats.py
+
+!github/lib/
+github/lib/*
+!github/lib/__init__.py
+!github/lib/common.py
+
+!weather/
+weather/*
+!weather/__init__.py
+!weather/open_meteo_forecast.py

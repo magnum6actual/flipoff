@@ -1,12 +1,12 @@
-export const GRID_COLS = 22;
-export const GRID_ROWS = 5;
+export const DEFAULT_GRID_COLS = 18;
+export const DEFAULT_GRID_ROWS = 5;
+export const DEFAULT_MESSAGE_DURATION_SECONDS = 4;
+export const DEFAULT_API_MESSAGE_DURATION_SECONDS = 30;
 
 export const SCRAMBLE_DURATION = 800;
 export const FLIP_DURATION = 300;
 export const STAGGER_DELAY = 25;
 export const TOTAL_TRANSITION = 3800;
-export const MESSAGE_INTERVAL = 4000;
-
 export const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-!?\'/: ';
 
 export const SCRAMBLE_COLORS = [
@@ -19,7 +19,7 @@ export const ACCENT_COLORS = [
   '#00AAFF', '#00FFCC'
 ];
 
-export const MESSAGES = [
+export const DEFAULT_MESSAGES = [
   [
     '',
     'GOD IS IN',
@@ -45,8 +45,8 @@ export const MESSAGES = [
     '',
     'LESS IS MORE',
     '',
-    '- MIES VAN DER ROHE',
-    ''
+    '- MIES VAN DER',
+    'ROHE'
   ],
   [
     '',
@@ -63,3 +63,11 @@ export const MESSAGES = [
     ''
   ]
 ];
+
+export const DEFAULT_DISPLAY_CONFIG = {
+  cols: DEFAULT_GRID_COLS,
+  rows: DEFAULT_GRID_ROWS,
+  defaultMessages: DEFAULT_MESSAGES.map((message) => [...message]),
+  messageDurationSeconds: DEFAULT_MESSAGE_DURATION_SECONDS,
+  apiMessageDurationSeconds: DEFAULT_API_MESSAGE_DURATION_SECONDS,
+};

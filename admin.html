@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f6f8">
+  <title>FlipOff Admin</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <main class="admin-app">
+    <section class="login-shell" id="login-shell">
+      <section class="login-intro">
+        <div class="login-intro-copy">
+          <p class="eyebrow">FlipOff Admin</p>
+          <h1>Run the display from one calm control desk.</h1>
+          <p class="lede">
+            Control remote overrides, rotation screens, and board geometry without digging through crowded panels.
+          </p>
+        </div>
+
+        <div class="login-highlights" aria-hidden="true">
+          <article class="intro-note">
+            <p class="section-kicker">Overview</p>
+            <p>Board status, rotation health, and override state stay visible in the first scan.</p>
+          </article>
+          <article class="intro-note">
+            <p class="section-kicker">Editing</p>
+            <p>Message tools, screens, and settings each get their own working surface instead of sharing one stack.</p>
+          </article>
+          <article class="intro-note">
+            <p class="section-kicker">Runtime</p>
+            <p>Changes still save directly to the server config and refresh the live display automatically.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="login-card" id="login-panel">
+        <div class="login-card-head">
+          <p class="section-kicker">Admin Login</p>
+          <h2>Unlock the dashboard</h2>
+          <p class="helper-copy">Enter the current admin password to open the runtime controls.</p>
+        </div>
+
+        <form id="login-form" class="stack">
+          <label class="field">
+            <span>Password</span>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button type="submit" class="primary-btn">Unlock Admin</button>
+        </form>
+
+        <p class="helper-copy">
+          If this is the first run, the server prints the generated password to the terminal and stores it in the user config.
+        </p>
+      </section>
+    </section>
+
+    <section class="dashboard-shell hidden" id="dashboard-shell">
+      <aside class="dashboard-sidebar">
+        <div class="sidebar-brand">
+          <p class="eyebrow">FlipOff Admin</p>
+          <h2>Control Desk</h2>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Admin pages">
+          <button
+            type="button"
+            class="nav-link active"
+            data-page-target="home"
+            data-page-title="Home"
+            aria-current="page"
+          >
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M4 10.5L12 4l8 6.5" />
+                <path d="M6.5 9.5V20h11V9.5" />
+                <path d="M10 20v-5h4v5" />
+              </svg>
+            </span>
+            <span>Home</span>
+          </button>
+
+          <button
+            type="button"
+            class="nav-link"
+            data-page-target="send-message"
+            data-page-title="Send Message"
+          >
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M21 4L10 15" />
+                <path d="M21 4L14 20l-4-5-5-4 16-7z" />
+              </svg>
+            </span>
+            <span>Send Message</span>
+          </button>
+
+          <button
+            type="button"
+            class="nav-link"
+            data-page-target="screens"
+            data-page-title="Screens"
+          >
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <rect x="4" y="5" width="16" height="14" rx="2" />
+                <path d="M4 10h16" />
+                <path d="M9 10v9" />
+              </svg>
+            </span>
+            <span>Screens</span>
+          </button>
+
+          <button
+            type="button"
+            class="nav-link"
+            data-page-target="settings"
+            data-page-title="Settings"
+          >
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M4 7h10" />
+                <path d="M4 17h16" />
+                <path d="M14 7h6" />
+                <path d="M4 12h16" />
+                <circle cx="11" cy="7" r="2.5" />
+                <circle cx="8" cy="12" r="2.5" />
+                <circle cx="16" cy="17" r="2.5" />
+              </svg>
+            </span>
+            <span>Settings</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <button type="button" id="logout-btn" class="ghost-btn sidebar-logout">Log out</button>
+        </div>
+      </aside>
+
+      <section class="dashboard-main">
+        <header class="workspace-header">
+          <div>
+            <p class="section-kicker">Admin Workspace</p>
+            <h1 id="workspace-title">Home</h1>
+          </div>
+          <div class="workspace-header-actions" id="workspace-header-actions">
+            <div class="board-switcher-toolbar" aria-label="Board switcher">
+              <div class="board-switcher-row">
+                <select id="board-select"></select>
+                <button type="button" id="add-board-btn" class="screen-icon-button" aria-label="Add board" title="Add board">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 5v14" />
+                    <path d="M5 12h14" />
+                  </svg>
+                </button>
+                <button type="button" id="delete-board-btn" class="screen-icon-button danger" aria-label="Delete board" title="Delete board">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M5 7h14" />
+                    <path d="M9 7V5h6v2" />
+                    <path d="M8 10v7" />
+                    <path d="M12 10v7" />
+                    <path d="M16 10v7" />
+                    <path d="M7 7l1 12h8l1-12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="workspace-page" data-page="home">
+          <div class="home-board-page">
+            <div id="home-board-grid" class="home-board-grid" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="workspace-page hidden" data-page="send-message">
+          <form id="message-form" class="stack message-form-layout">
+            <label class="field">
+              <span>Message</span>
+              <textarea id="remote-message" rows="5" spellcheck="false" placeholder="Server driven updates are live"></textarea>
+            </label>
+
+            <div class="action-row">
+              <button type="submit" class="primary-btn">Send Message</button>
+              <button type="button" id="clear-message-btn" class="ghost-btn">Clear Active Override</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="workspace-page hidden" data-page="screens">
+          <div class="page-grid page-grid-single">
+            <form id="screens-form" class="stack screens-form-layout">
+              <div id="screens-list" class="screens-list" aria-live="polite"></div>
+
+              <div class="action-row screens-actions">
+                <button type="button" id="add-screen-btn" class="ghost-btn">Add Screen</button>
+                <button type="submit" class="primary-btn">Save Screens</button>
+              </div>
+
+            </form>
+          </div>
+        </section>
+
+        <section class="workspace-page hidden" data-page="settings">
+          <div class="page-grid page-grid-single">
+            <div class="page-panel settings-panel">
+              <form id="settings-form" class="stack">
+                <section class="form-section stack">
+                  <div class="section-heading">
+                    <div>
+                      <p class="section-kicker">Board</p>
+                      <h2>Identity and routing</h2>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-two">
+                    <label class="field">
+                      <span>Board name</span>
+                      <input id="board-name" name="board-name" type="text" required>
+                    </label>
+
+                    <label class="field">
+                      <span>Board slug</span>
+                      <input id="board-slug" name="board-slug" type="text" required>
+                    </label>
+                  </div>
+
+                  <label class="field">
+                    <span>Default board</span>
+                    <input id="board-default" name="board-default" type="checkbox">
+                  </label>
+                </section>
+
+                <section class="form-section stack">
+                  <div class="section-heading">
+                    <div>
+                      <p class="section-kicker">Display</p>
+                      <h2>Board geometry</h2>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-two">
+                    <label class="field">
+                      <span>Columns</span>
+                      <input id="cols" name="cols" type="number" min="6" max="256" required>
+                    </label>
+
+                    <label class="field">
+                      <span>Rows</span>
+                      <input id="rows" name="rows" type="number" min="1" max="128" required>
+                    </label>
+                  </div>
+                </section>
+
+                <section class="form-section stack">
+                  <div class="section-heading">
+                    <div>
+                      <p class="section-kicker">Timing</p>
+                      <h2>Rotation and override windows</h2>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-two">
+                    <label class="field">
+                      <span>Screen message duration (seconds)</span>
+                      <input id="message-duration" name="message-duration" type="number" min="1" max="86400" required>
+                    </label>
+
+                    <label class="field">
+                      <span>API message duration (seconds)</span>
+                      <input id="api-duration" name="api-duration" type="number" min="1" max="86400" required>
+                    </label>
+                  </div>
+                </section>
+
+                <section class="form-section stack">
+                  <div class="section-heading">
+                    <div>
+                      <p class="section-kicker">Security</p>
+                      <h2>Admin password</h2>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-two">
+                    <label class="field">
+                      <span>New admin password</span>
+                      <input id="admin-password-setting" name="admin-password-setting" type="password" autocomplete="new-password" placeholder="Leave blank to keep current password">
+                    </label>
+
+                    <label class="field">
+                      <span>Confirm new admin password</span>
+                      <input id="admin-password-confirm-setting" name="admin-password-confirm-setting" type="password" autocomplete="new-password" placeholder="Repeat the new password">
+                    </label>
+                  </div>
+                </section>
+
+                <p class="helper-copy">
+                  Changes save to the server config immediately. Leave the password fields blank to keep the current password.
+                </p>
+
+                <button type="submit" class="primary-btn">Save Settings</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <p id="status-message" class="status-message hidden" aria-live="polite"></p>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="screen-modal" class="screen-modal">
+    <form method="dialog" id="screen-modal-form" class="screen-modal-card">
+      <div class="screen-modal-header">
+        <div>
+          <p class="section-kicker">Screen Editor</p>
+          <h2 id="screen-modal-title">Add Screen</h2>
+        </div>
+        <button type="button" id="close-screen-modal-btn" class="modal-close-btn" aria-label="Close dialog" title="Close dialog">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 6l12 12" />
+            <path d="M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="screen-modal-grid">
+        <label class="field">
+          <span>Screen Type</span>
+          <input id="screen-type-select" type="hidden" value="manual">
+          <div class="segmented-control" role="tablist" aria-label="Screen Type">
+            <button type="button" class="segment-btn active" data-screen-type-value="manual" aria-pressed="true">Manual</button>
+            <button type="button" class="segment-btn" data-screen-type-value="plugin" aria-pressed="false">Plugin</button>
+          </div>
+        </label>
+
+        <label class="field">
+          <span>Name</span>
+          <input id="screen-name-input" type="text" placeholder="Optional internal label">
+        </label>
+
+        <label class="field">
+          <span>Slug</span>
+          <input id="screen-slug-input" type="text" placeholder="welcome-screen">
+        </label>
+      </div>
+
+      <div id="manual-screen-fields" class="stack">
+        <div id="screen-line-fields" class="screen-line-fields"></div>
+        <p class="helper-copy">Blank lines are allowed between populated lines, but at least one line must contain text.</p>
+      </div>
+
+        <div id="plugin-screen-fields" class="stack hidden">
+        <div class="screen-modal-grid">
+          <label class="field">
+            <span>Plugin</span>
+            <input id="plugin-select" type="hidden">
+            <div class="custom-picker" id="plugin-picker">
+              <button
+                type="button"
+                id="plugin-select-trigger"
+                class="custom-picker-trigger"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+              ></button>
+              <div id="plugin-select-menu" class="custom-picker-menu hidden" role="listbox" aria-label="Plugin"></div>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Refresh Interval (minutes)</span>
+            <input id="plugin-refresh-minutes" type="number" min="1" step="1" value="60">
+          </label>
+        </div>
+
+        <div>
+          <p class="section-kicker">Plugin Settings</p>
+          <div id="plugin-settings-fields" class="screen-line-fields"></div>
+        </div>
+
+        <div id="plugin-common-settings-section" class="hidden">
+          <p class="section-kicker">Common Settings</p>
+          <div id="plugin-common-settings-fields" class="screen-line-fields"></div>
+        </div>
+
+        <div>
+          <p class="section-kicker">Screen Design</p>
+          <div id="plugin-design-fields" class="screen-line-fields"></div>
+        </div>
+      </div>
+
+      <div class="screen-modal-actions">
+        <button type="button" id="cancel-screen-modal-btn" class="ghost-btn">Cancel</button>
+        <button type="submit" class="primary-btn">Save Screen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
