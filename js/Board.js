@@ -4,6 +4,14 @@ import {
   TOTAL_TRANSITION, ACCENT_COLORS
 } from './constants.js';
 
+const DISPLAY_MODES = ['color', 'matrix', 'grayscale'];
+
+const ACCENT_COLORS_BY_MODE = {
+  color:     ['#00FF7F', '#FF4D00', '#AA00FF', '#00AAFF', '#00FFCC'],
+  matrix:    ['#00FF41', '#00CC33', '#00FF88', '#003B00', '#00FF41'],
+  grayscale: ['#888888', '#AAAAAA', '#666666', '#CCCCCC', '#555555'],
+};
+
 export class Board {
   constructor(containerEl, soundEngine) {
     this.cols = GRID_COLS;
@@ -13,6 +21,7 @@ export class Board {
     this.tiles = [];
     this.currentGrid = [];
     this.accentIndex = 0;
+    this.modeIndex = 0; // 0=color, 1=matrix, 2=grayscale
 
     // Build board DOM
     this.boardEl = document.createElement('div');
@@ -69,6 +78,7 @@ export class Board {
       <div><span>Fullscreen</span><kbd>F</kbd></div>
       <div><span>Mute</span><kbd>M</kbd></div>
       <div><span>Random</span><kbd>R</kbd></div>
+      <div><span>Color mode</span><kbd>C</kbd></div>
     `;
     this.boardEl.appendChild(overlay);
 
@@ -88,8 +98,18 @@ export class Board {
     return bar;
   }
 
+  cycleMode() {
+    this.modeIndex = (this.modeIndex + 1) % DISPLAY_MODES.length;
+    return DISPLAY_MODES[this.modeIndex];
+  }
+
+  get displayMode() {
+    return DISPLAY_MODES[this.modeIndex];
+  }
+
   _updateAccentColors() {
-    const color = ACCENT_COLORS[this.accentIndex % ACCENT_COLORS.length];
+    const palette = ACCENT_COLORS_BY_MODE[this.displayMode];
+    const color = palette[this.accentIndex % palette.length];
     const segments = this.boardEl.querySelectorAll('.accent-segment');
     segments.forEach(seg => {
       seg.style.backgroundColor = color;
@@ -113,7 +133,7 @@ export class Board {
 
         if (newChar !== oldChar) {
           const delay = (r * this.cols + c) * STAGGER_DELAY;
-          this.tiles[r][c].scrambleTo(newChar, delay);
+          this.tiles[r][c].scrambleTo(newChar, delay, this.displayMode);
           hasChanges = true;
         }
       }
