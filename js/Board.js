@@ -137,13 +137,16 @@ export class Board {
   }
 
   _formatToGrid(lines) {
+    const segmenter = new Intl.Segmenter();
+    const segment = (str) => [...segmenter.segment(str)].map(s => s.segment);
     const grid = [];
     for (let r = 0; r < this.rows; r++) {
       const line = (lines[r] || '').toUpperCase();
-      const padTotal = this.cols - line.length;
+      const chars = segment(line);
+      const padTotal = this.cols - chars.length;
       const padLeft = Math.max(0, Math.floor(padTotal / 2));
-      const padded = ' '.repeat(padLeft) + line + ' '.repeat(Math.max(0, this.cols - padLeft - line.length));
-      grid.push(padded.split(''));
+      const padRight = Math.max(0, this.cols - padLeft - chars.length);
+      grid.push([...Array(padLeft).fill(' '), ...chars, ...Array(padRight).fill(' ')]);
     }
     return grid;
   }
