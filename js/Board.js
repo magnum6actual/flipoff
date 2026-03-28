@@ -136,14 +136,15 @@ export class Board {
     }, TOTAL_TRANSITION + 200);
   }
 
-  _formatToGrid(lines) {
+   _formatToGrid(lines) {
     const grid = [];
     for (let r = 0; r < this.rows; r++) {
       const line = (lines[r] || '').toUpperCase();
-      const padTotal = this.cols - line.length;
+      const chars = Array.from(line);
+      const padTotal = this.cols - chars.length;
       const padLeft = Math.max(0, Math.floor(padTotal / 2));
-      const padded = ' '.repeat(padLeft) + line + ' '.repeat(Math.max(0, this.cols - padLeft - line.length));
-      grid.push(padded.split(''));
+      const padded = ' '.repeat(padLeft) + line + ' '.repeat(Math.max(0, this.cols - padLeft - chars.length));
+      grid.push(Array.from(padded));
     }
     return grid;
   }
