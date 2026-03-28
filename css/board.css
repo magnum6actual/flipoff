@@ -105,6 +105,13 @@
   margin-left: 16px;
 }
 
+/* Fullscreen: fill the screen edge-to-edge */
+.fullscreen-active .board {
+  border-radius: 0;
+  box-shadow: none;
+  padding: 24px 36px 36px;
+}
+
 /* Scroll indicator at bottom of board */
 .board::after {
   content: '';

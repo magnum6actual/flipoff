@@ -2,6 +2,8 @@
 
 **Turn any TV into a retro split-flap display.** The classic flip-board look, without the $3,500 hardware. And it's free.
 
+Access it live: ariesyous.github.io/flipoff/
+
 ![FlipOff Screenshot](screenshot.png)
 
 ## What is this?

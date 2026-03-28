@@ -134,10 +134,44 @@
   padding: 0 24px 32px;
 }
 
+/* Nav action buttons */
+.control-panel-btn,
+.fullscreen-btn {
+  padding: 7px 14px;
+  background: #000;
+  color: #fff !important;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 7px;
+  transition: background 0.2s;
+}
+
+.control-panel-btn:hover,
+.fullscreen-btn:hover {
+  background: #333 !important;
+  color: #fff !important;
+}
+
+.fullscreen-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
 /* Fullscreen: hide header+hero, board fills viewport */
 .fullscreen-active .header,
 .fullscreen-active .hero {
   display: none;
+}
+
+.fullscreen-active .page-frame {
+  max-width: 100%;
+  margin: 0;
+  border-radius: 0;
+  background: #111;
+  min-height: 100vh;
 }
 
 .fullscreen-active .board-section {

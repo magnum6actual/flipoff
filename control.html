@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111111">
+  <title>FlipOff. Control</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/control.css">
+</head>
+<body>
+  <div class="ctrl-body">
+
+    <header class="ctrl-header">
+      <div class="ctrl-logo">FlipOff. <span>Control</span></div>
+      <div class="status-indicator">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">no display</span>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="custom">Custom</button>
+      <button class="tab-btn" data-tab="clock">Clock</button>
+      <button class="tab-btn" data-tab="countdown">Countdown</button>
+      <button class="tab-btn" data-tab="queue">Queue</button>
+    </div>
+
+    <!-- Custom Message -->
+    <div class="panel active" id="panel-custom">
+      <div class="field">
+        <label for="custom-input">Message</label>
+        <textarea id="custom-input" rows="3" placeholder="Type anything..."></textarea>
+        <p class="hint">Auto-wrapped to 22 characters per line, 5 lines max. Use Enter for explicit line breaks.</p>
+      </div>
+      <div class="preview-label">Preview</div>
+      <pre class="preview-grid" id="custom-preview"></pre>
+      <div class="btn-row">
+        <button class="btn-primary" id="custom-send">Send to Display</button>
+        <button class="btn-secondary" id="resume-custom">Resume Auto-Rotation</button>
+      </div>
+    </div>
+
+    <!-- Clock -->
+    <div class="panel" id="panel-clock">
+      <div class="live-display" id="clock-display">--:--:--</div>
+      <div class="field">
+        <label for="clock-format">Format</label>
+        <select id="clock-format">
+          <option value="hhmm">HH:MM</option>
+          <option value="hhmmss" selected>HH:MM:SS</option>
+          <option value="full">Time + Date</option>
+        </select>
+      </div>
+      <div class="preview-label">Preview</div>
+      <pre class="preview-grid" id="clock-preview"></pre>
+      <div class="btn-row">
+        <button class="btn-primary" id="clock-start">Start Clock on Display</button>
+        <button class="btn-secondary" id="clock-stop" style="display:none">Stop Clock</button>
+        <button class="btn-secondary" id="resume-clock">Resume Auto-Rotation</button>
+      </div>
+    </div>
+
+    <!-- Countdown -->
+    <div class="panel" id="panel-countdown">
+      <div class="live-display" id="countdown-display">--:--:--</div>
+      <div class="field">
+        <label for="countdown-target">Count down to</label>
+        <input type="datetime-local" id="countdown-target">
+      </div>
+      <div class="field">
+        <label for="countdown-label">Label (shown above timer, optional)</label>
+        <input type="text" id="countdown-label" placeholder="e.g. LAUNCH IN" maxlength="22">
+      </div>
+      <div class="preview-label">Preview</div>
+      <pre class="preview-grid" id="countdown-preview"></pre>
+      <div class="btn-row">
+        <button class="btn-primary" id="countdown-start">Start Countdown on Display</button>
+        <button class="btn-secondary" id="countdown-stop" style="display:none">Stop Countdown</button>
+        <button class="btn-secondary" id="resume-countdown">Resume Auto-Rotation</button>
+      </div>
+    </div>
+
+    <!-- Queue -->
+    <div class="panel" id="panel-queue">
+      <div class="field">
+        <label for="queue-input">Add message</label>
+        <textarea id="queue-input" rows="2" placeholder="Type a message to add..."></textarea>
+      </div>
+      <div class="btn-row" style="margin-bottom:20px">
+        <button class="btn-secondary" id="queue-add">+ Add to Queue</button>
+      </div>
+
+      <ul class="queue-list" id="queue-list">
+        <li class="queue-empty" id="queue-empty">No messages yet.</li>
+      </ul>
+
+      <div class="field">
+        <label for="queue-interval">Rotation interval</label>
+        <select id="queue-interval">
+          <option value="10000">10 seconds</option>
+          <option value="20000" selected>20 seconds</option>
+          <option value="30000">30 seconds</option>
+          <option value="60000">60 seconds</option>
+        </select>
+      </div>
+
+      <div class="preview-label">Preview (first message)</div>
+      <pre class="preview-grid" id="queue-preview"></pre>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="queue-start">Send Queue to Display</button>
+        <button class="btn-secondary" id="resume-queue">Resume Auto-Rotation</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="js/control.js"></script>
+</body>
+</html>
