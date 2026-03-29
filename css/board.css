@@ -83,7 +83,7 @@
   font-size: 12px;
   color: rgba(255, 255, 255, 0.7);
   z-index: 10;
-  min-width: 180px;
+  min-width: 196px;
 }
 
 .shortcuts-overlay.visible {
@@ -93,6 +93,8 @@
 .shortcuts-overlay div {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 16px;
   padding: 4px 0;
 }
 
@@ -102,7 +104,18 @@
   border-radius: 3px;
   font-family: inherit;
   font-size: 11px;
-  margin-left: 16px;
+}
+
+.shortcut-sound-mode {
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 700;
+}
+
+/* Fullscreen: fill the screen edge-to-edge */
+.fullscreen-active .board {
+  border-radius: 0;
+  box-shadow: none;
+  padding: 24px 36px 36px;
 }
 
 /* Scroll indicator at bottom of board */

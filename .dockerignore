@@ -1,0 +1,7 @@
+.git
+.github
+.DS_Store
+.venv
+__pycache__
+*.pyc
+screenshot.png

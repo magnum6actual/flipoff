@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111111">
+  <title>FlipOff. Display</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/board.css">
+  <link rel="stylesheet" href="css/tile.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #1A1A1A;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #board-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .board {
+      border-radius: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      box-shadow: none !important;
+    }
+  </style>
+</head>
+<body>
+  <section id="board-container"></section>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

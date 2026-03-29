@@ -1,0 +1,218 @@
+{
+  "grid": {
+    "cols": 28,
+    "rows": 5
+  },
+  "timing": {
+    "flipStepDuration": 130,
+    "flipStepFastDuration": 95,
+    "flipSettleDuration": 45,
+    "staggerDelay": 25,
+    "messageInterval": 5000,
+    "messageDurationSeconds": 4,
+    "apiMessageDurationSeconds": 30
+  },
+  "charset": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-!?'/: ()",
+  "accentColors": [
+    "#00FF7F",
+    "#FF4D00",
+    "#AA00FF",
+    "#00AAFF",
+    "#00FFCC"
+  ],
+  "messages": [
+    {
+      "dynamic": "datetime"
+    },
+    {
+      "dynamic": "weather"
+    },
+    [
+      "",
+      "🏛️ GOD IS IN",
+      "THE DETAILS .",
+      "(LUDWIG MIES)",
+      ""
+    ],
+    [
+      "",
+      "🍎 STAY HUNGRY",
+      "STAY FOOLISH",
+      "(STEVE JOBS)",
+      ""
+    ],
+    [
+      "",
+      "💼 GOOD DESIGN IS",
+      "GOOD BUSINESS",
+      "(THOMAS WATSON)",
+      ""
+    ],
+    [
+      "",
+      "✨ LESS IS MORE",
+      "",
+      "(MIES VAN DER ROHE)",
+      ""
+    ],
+    [
+      "",
+      "🎯 MAKE IT SIMPLE",
+      "BUT SIGNIFICANT",
+      "(DON DRAPER)",
+      ""
+    ],
+    {
+      "dynamic": "datetime"
+    },
+    [
+      "",
+      "🎨 HAVE NO FEAR OF",
+      "PERFECTION",
+      "(SALVADOR DALI)",
+      ""
+    ],
+    [
+      "",
+      "🏗️ FORM FOLLOWS",
+      "FUNCTION",
+      "(LOUIS SULLIVAN)",
+      ""
+    ],
+    [
+      "",
+      "💎 SIMPLICITY IS THE",
+      "ULTIMATE ELEGANCE",
+      "(DA VINCI)",
+      ""
+    ],
+    [
+      "",
+      "👁️ DESIGN IS NOT JUST",
+      "WHAT IT LOOKS LIKE",
+      "(STEVE JOBS)",
+      ""
+    ],
+    [
+      "",
+      "😊 CREATE THINGS THAT",
+      "MAKE PEOPLE HAPPY",
+      "(DIETER RAMS)",
+      ""
+    ],
+    {
+      "dynamic": "datetime"
+    },
+    [
+      "",
+      "🚀 MOVE FAST AND",
+      "BREAK THINGS",
+      "(MARK ZUCKERBERG)",
+      ""
+    ],
+    [
+      "",
+      "💻 TALK IS CHEAP",
+      "SHOW ME THE CODE",
+      "(LINUS TORVALDS)",
+      ""
+    ],
+    [
+      "",
+      "🔮 THE BEST WAY TO",
+      "PREDICT THE FUTURE",
+      "IS TO INVENT IT",
+      "(ALAN KAY)"
+    ],
+    [
+      "",
+      "📦 SHIPPING IS A",
+      "FEATURE",
+      "",
+      ""
+    ],
+    [
+      "",
+      "🟢 DO OR DO NOT",
+      "THERE IS NO TRY",
+      "(YODA)",
+      ""
+    ],
+    {
+      "dynamic": "datetime"
+    },
+    [
+      "",
+      "⚡ FORTUNE FAVORS",
+      "THE BOLD",
+      "(VIRGIL)",
+      ""
+    ],
+    [
+      "",
+      "🪨 THE OBSTACLE IS",
+      "THE WAY",
+      "(MARCUS AURELIUS)",
+      ""
+    ],
+    [
+      "",
+      "🏛️ WHAT WE DO IN LIFE",
+      "ECHOES IN ETERNITY",
+      "(MARCUS AURELIUS)",
+      ""
+    ],
+    [
+      "",
+      "✈️ NOW DEPARTING",
+      "GATE 42",
+      "DESTINATION: UNKNOWN",
+      ""
+    ],
+    [
+      "",
+      "📶 WIFI: FLIPOFF",
+      "PASSWORD:",
+      "NICE TRY 🔒",
+      ""
+    ],
+    {
+      "dynamic": "datetime"
+    },
+    [
+      "",
+      "🔥 IT WORKS ON",
+      "MY MACHINE",
+      "(EVERY DEV EVER 🤷)",
+      ""
+    ],
+    [
+      "",
+      "☕ FIRST COFFEE",
+      "THEN THE WORLD",
+      "",
+      ""
+    ],
+    [
+      "",
+      "🧠 THINK DIFFERENT",
+      "",
+      "(APPLE)",
+      ""
+    ],
+    [
+      "",
+      "🌍 BE THE CHANGE YOU",
+      "WISH TO SEE",
+      "(GANDHI)",
+      ""
+    ],
+    [
+      "",
+      "👋 HELLO WORLD",
+      "",
+      "(EVERY PROGRAMMER)",
+      ""
+    ]
+  ]
+}

@@ -1,0 +1,17 @@
+services:
+  flipoff:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - flipoff-data:/root/.flipoff
+    environment:
+      - PORT=8080
+      # - ADMIN_PASSWORD=changeme     # optional: set a fixed admin password
+      # - API_NINJAS_API_KEY=...      # optional: for quote/crypto plugins
+
+volumes:
+  flipoff-data:
+    # Board config and screens are persisted here.
+    # If you change config.json and messages don't update, the server is
+    # using previously saved state. Reset with: docker compose down -v

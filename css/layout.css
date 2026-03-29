@@ -25,6 +25,29 @@
   font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.config-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ccc;
+  flex-shrink: 0;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.config-indicator.online {
+  background: #00FF7F;
+  box-shadow: 0 0 6px rgba(0, 255, 127, 0.4);
+}
+
+.config-indicator.offline {
+  background: #FF4D00;
+  box-shadow: 0 0 6px rgba(255, 77, 0, 0.4);
 }
 
 .header-nav {
@@ -63,66 +86,30 @@
   display: none;
 }
 
-/* Hero */
-.hero {
-  text-align: center;
-  padding: 56px 24px 44px;
-  flex-shrink: 0;
-}
-
-.hero h1 {
-  font-size: 48px;
-  font-weight: 800;
-  letter-spacing: -1.5px;
-  line-height: 1.15;
-  max-width: 650px;
-  margin: 0 auto 14px;
-  color: #111;
-}
-
-.hero .subtitle {
-  font-size: 16px;
-  color: #888;
-  margin-bottom: 28px;
-  font-weight: 400;
-}
-
-.hero-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.hero-cta input {
-  padding: 12px 18px;
-  border: 1.5px solid #E0E0E0;
-  border-radius: 8px;
-  font-size: 14px;
-  background: #fff;
-  width: 220px;
-}
-
-.hero-cta input::placeholder {
-  color: #bbb;
-}
-
-.hero-cta input:focus {
-  border-color: #999;
-}
-
-.hero-cta button {
-  padding: 12px 22px;
+/* Nav action buttons */
+.control-panel-btn,
+.fullscreen-btn {
+  padding: 7px 14px;
   background: #000;
-  color: #fff;
-  font-size: 14px;
+  color: #fff !important;
+  font-size: 13px;
   font-weight: 600;
-  border-radius: 8px;
-  white-space: nowrap;
+  border-radius: 7px;
   transition: background 0.2s;
 }
 
-.hero-cta button:hover {
-  background: #222;
+.control-panel-btn:hover,
+.fullscreen-btn:hover {
+  background: #333 !important;
+  color: #fff !important;
+}
+
+.fullscreen-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 /* Board Section */
@@ -134,10 +121,36 @@
   padding: 0 24px 32px;
 }
 
-/* Fullscreen: hide header+hero, board fills viewport */
+/* Countdown progress bar */
+.countdown-bar {
+  height: 3px;
+  background: rgba(0, 0, 0, 0.06);
+  margin: 0 24px 24px;
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.countdown-fill {
+  height: 100%;
+  width: 0%;
+  background: #00FF7F;
+  border-radius: 2px;
+  transition: width 0.3s linear;
+}
+
+/* Fullscreen: hide header and countdown, board fills viewport */
 .fullscreen-active .header,
-.fullscreen-active .hero {
+.fullscreen-active .countdown-bar {
   display: none;
+}
+
+.fullscreen-active .page-frame {
+  max-width: 100%;
+  margin: 0;
+  border-radius: 0;
+  background: #111;
+  min-height: 100vh;
 }
 
 .fullscreen-active .board-section {

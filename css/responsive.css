@@ -9,20 +9,12 @@
   .page-frame {
     max-width: 1600px;
   }
-
-  .hero h1 {
-    font-size: 60px;
-  }
 }
 
 /* Standard desktop */
 @media (max-width: 1200px) {
   .board {
     --tile-size: clamp(32px, 4vw, 50px);
-  }
-
-  .hero h1 {
-    font-size: 42px;
   }
 
   .page-frame {
@@ -45,18 +37,6 @@
 
   .header {
     padding: 14px 20px;
-  }
-
-  .hero {
-    padding: 36px 16px 28px;
-  }
-
-  .hero h1 {
-    font-size: 32px;
-  }
-
-  .hero .subtitle {
-    font-size: 14px;
   }
 
   .accent-segment {
@@ -90,31 +70,6 @@
     font-size: 12px;
   }
 
-  .hero h1 {
-    font-size: 22px;
-    letter-spacing: -0.5px;
-  }
-
-  .hero .subtitle {
-    font-size: 13px;
-  }
-
-  .hero-cta {
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-    padding: 0 16px;
-  }
-
-  .hero-cta input {
-    width: 100%;
-    border-radius: 8px;
-  }
-
-  .hero-cta button {
-    width: 100%;
-  }
-
   .accent-bar {
     display: none;
   }
@@ -135,7 +90,7 @@
 }
 
 :fullscreen .header,
-:fullscreen .hero {
+:fullscreen .countdown-bar {
   display: none !important;
 }
 

@@ -1,14 +1,16 @@
 export class KeyboardController {
-  constructor(rotator, soundEngine) {
+  constructor(rotator, soundEngine, board) {
     this.rotator = rotator;
     this.soundEngine = soundEngine;
+    this.board = board;
 
     document.addEventListener('keydown', (e) => this._handleKey(e));
   }
 
   _handleKey(e) {
-    // Don't capture when typing in input fields
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    // Don't hijack Enter/Space on interactive elements (buttons, links, selects)
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || e.target.tagName === 'SELECT') return;
 
     switch (e.key) {
       case 'Enter':
@@ -16,37 +18,48 @@ export class KeyboardController {
         e.preventDefault();
         this.rotator.next();
         break;
-
       case 'ArrowRight':
         e.preventDefault();
         this.rotator.next();
         break;
-
       case 'ArrowLeft':
         e.preventDefault();
         this.rotator.prev();
         break;
-
       case 'f':
       case 'F':
         e.preventDefault();
         this._toggleFullscreen();
         break;
-
       case 'm':
       case 'M':
         e.preventDefault();
         if (this.soundEngine) {
-          const muted = this.soundEngine.toggleMute();
-          this._showToast(muted ? 'Sound off' : 'Sound on');
+          const state = this.soundEngine.cycleSoundMode();
+          this._showToast(state.label);
         }
         break;
-
+      case 'r':
+      case 'R':
+        e.preventDefault();
+        if (this.rotator.toggleRandom) {
+          const randomOn = this.rotator.toggleRandom();
+          this._showToast(randomOn ? 'Random on' : 'Random off');
+        }
+        break;
+      case 'c':
+      case 'C':
+        e.preventDefault();
+        if (this.board) {
+          const mode = this.board.cycleMode();
+          const labels = { color: 'Color mode', matrix: 'Matrix mode', grayscale: 'Grayscale mode' };
+          this._showToast(labels[mode]);
+        }
+        break;
       case 'Escape':
         if (document.fullscreenElement) {
           document.exitFullscreen();
         }
-        // Also hide shortcuts overlay
         const overlay = document.querySelector('.shortcuts-overlay');
         if (overlay) overlay.classList.remove('visible');
         break;

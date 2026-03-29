@@ -16,11 +16,23 @@
   <div class="page-frame">
     <!-- Header -->
     <header class="header">
-      <div class="header-logo">FlipOff.</div>
+      <div class="header-logo">
+        FlipOff.
+        <span class="config-indicator" id="config-indicator"></span>
+      </div>
       <nav class="header-nav">
-        <a href="#features">Features</a>
-        <a href="#pricing">Pricing</a>
-        <button class="volume-icon" id="volume-btn" title="Toggle sound">
+        <a href="control.html" target="flipoff-control" class="control-panel-btn">Control Panel</a>
+        <a href="/admin" class="control-panel-btn admin-btn" id="admin-btn" style="display:none">Admin</a>
+        <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <polyline points="9 21 3 21 3 15"></polyline>
+            <line x1="21" y1="3" x2="14" y2="10"></line>
+            <line x1="3" y1="21" x2="10" y2="14"></line>
+          </svg>
+          Fullscreen
+        </button>
+        <button class="volume-icon" id="volume-btn" aria-label="Toggle sound">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
@@ -30,19 +42,14 @@
       </nav>
     </header>
 
-    <!-- Hero -->
-    <section class="hero">
-      <h1>Turn any TV into a retro split-flap display.</h1>
-      <p class="subtitle">The classic flip-board look, without the $3,500 hardware.</p>
-      <div class="hero-cta">
-        <input type="email" placeholder="you@example.com">
-        <button id="cta-btn">Get Early Access</button>
-      </div>
-    </section>
-
     <!-- Board -->
-    <section class="board-section" id="board-container">
-    </section>
+    <main class="board-section" id="board-container" role="status" aria-live="polite" aria-label="Split-flap message display">
+    </main>
+
+    <!-- Countdown bar (hidden in fullscreen) -->
+    <div class="countdown-bar" id="countdown-bar" role="progressbar" aria-label="Time until next message">
+      <div class="countdown-fill" id="countdown-fill"></div>
+    </div>
   </div>
 
   <script type="module" src="js/main.js"></script>
