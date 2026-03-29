@@ -1,6 +1,8 @@
 # FlipOff.
 
-**Turn any TV into a retro split-flap display.** The classic flip-board look, without the $3,500 hardware. And it's free.
+**Turn any TV into a retro split-flap display.
+Experience the classic flip-board look without the $3,500 hardware.
+And it's completely free.
 
 ![FlipOff Screenshot](screenshot.png)
 
