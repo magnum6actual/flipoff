@@ -1,0 +1,180 @@
+/* ── Controls toggle button ───────────────────────────────────────────────── */
+#controls-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 200;
+
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #888;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+#controls-toggle:hover {
+  color: #00ff7f;
+  border-color: #00ff7f;
+  box-shadow: 0 0 10px rgba(0, 255, 127, 0.25);
+}
+
+/* ── Controls panel ───────────────────────────────────────────────────────── */
+#controls-panel {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  z-index: 200;
+
+  width: 280px;
+  background: #1a1a1a;
+  border: 1px solid #2e2e2e;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+
+  font-family: 'Courier New', Courier, monospace;
+  color: #ccc;
+
+  /* Hidden by default */
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+#controls-panel.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ── Panel header ─────────────────────────────────────────────────────────── */
+.controls-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid #2e2e2e;
+}
+
+.controls-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #666;
+}
+
+#close-controls {
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px 4px;
+  transition: color 0.15s;
+}
+
+#close-controls:hover {
+  color: #ccc;
+}
+
+/* ── Panel sections ───────────────────────────────────────────────────────── */
+.controls-section {
+  padding: 14px 16px;
+}
+
+.controls-section + .controls-section {
+  border-top: 1px solid #2e2e2e;
+}
+
+.controls-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* ── Category chips ───────────────────────────────────────────────────────── */
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.category-chip {
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background: #111;
+  color: #888;
+
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.category-chip:hover {
+  color: #ccc;
+  border-color: #555;
+}
+
+.category-chip.active {
+  color: #00ff7f;
+  border-color: #00ff7f;
+  background: rgba(0, 255, 127, 0.08);
+}
+
+/* ── Interval select ──────────────────────────────────────────────────────── */
+#interval-select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #111;
+  color: #ccc;
+
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+
+  transition: border-color 0.15s;
+}
+
+#interval-select:focus {
+  outline: none;
+  border-color: #00ff7f;
+}
+
+#interval-select option {
+  background: #1a1a1a;
+  color: #ccc;
+}
+
+/* ── Hide controls in fullscreen ──────────────────────────────────────────── */
+:fullscreen #controls-toggle,
+:fullscreen #controls-panel {
+  display: none !important;
+}

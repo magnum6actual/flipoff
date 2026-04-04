@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/board.css">
   <link rel="stylesheet" href="css/tile.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/controls.css">
 </head>
 <body>
 
@@ -43,6 +44,48 @@
     <!-- Board -->
     <section class="board-section" id="board-container">
     </section>
+  </div>
+
+  <!-- Controls toggle button -->
+  <button id="controls-toggle" title="Display settings" aria-label="Display settings">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+  </button>
+
+  <!-- Controls panel -->
+  <div id="controls-panel" role="dialog" aria-label="Display settings">
+    <div class="controls-header">
+      <span class="controls-title">SETTINGS</span>
+      <button id="close-controls" aria-label="Close settings">&times;</button>
+    </div>
+
+    <div class="controls-section">
+      <div class="controls-label">CATEGORY</div>
+      <div class="category-chips">
+        <button class="category-chip active" data-category="all">ALL</button>
+        <button class="category-chip" data-category="motivation">MOTIVATION</button>
+        <button class="category-chip" data-category="wisdom">WISDOM</button>
+        <button class="category-chip" data-category="humor">HUMOR</button>
+        <button class="category-chip" data-category="design">DESIGN</button>
+        <button class="category-chip" data-category="life">LIFE</button>
+        <button class="category-chip" data-category="technology">TECHNOLOGY</button>
+        <button class="category-chip" data-category="success">SUCCESS</button>
+      </div>
+    </div>
+
+    <div class="controls-section">
+      <div class="controls-label">MESSAGE INTERVAL</div>
+      <select id="interval-select" aria-label="How long to show each message">
+        <option value="3">3 sec &mdash; fast</option>
+        <option value="5" selected>5 sec &mdash; default</option>
+        <option value="10">10 sec</option>
+        <option value="20">20 sec</option>
+        <option value="45">45 sec</option>
+        <option value="60">1 min &mdash; slow</option>
+      </select>
+    </div>
   </div>
 
   <script type="module" src="js/main.js"></script>

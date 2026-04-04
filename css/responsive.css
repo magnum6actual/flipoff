@@ -30,10 +30,10 @@
   }
 }
 
-/* Tablet */
+/* Tablet — 16-column grid tier (601–900px) */
 @media (max-width: 900px) {
   .board {
-    --tile-size: clamp(26px, 4.5vw, 40px);
+    --tile-size: clamp(26px, 4.2vw, 40px);
     padding: 20px 16px 32px;
     border-radius: 12px;
   }
@@ -65,10 +65,10 @@
   }
 }
 
-/* Mobile */
+/* Mobile — 12-column grid tier (≤600px) */
 @media (max-width: 600px) {
   .board {
-    --tile-size: clamp(18px, 4vw, 28px);
+    --tile-size: clamp(20px, 5.5vw, 30px);
     --tile-gap: 2px;
     padding: 12px 8px 24px;
   }
@@ -124,7 +124,7 @@
   }
 }
 
-/* Fullscreen mode */
+/* Fullscreen mode — tiles fill the entire viewport */
 :fullscreen .page-frame {
   max-width: none;
   margin: 0;
@@ -145,10 +145,52 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
 }
 
+/* Board: fixed, fills entire viewport */
 :fullscreen .board {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  padding: 0 !important;
   border-radius: 0;
   box-shadow: none;
-  --tile-size: clamp(44px, 4vw, 70px);
+  --tile-gap: 0px;
+  /* Used for font-size calc — matches JS target tile size */
+  --tile-size: min(
+    calc(100vw / var(--grid-cols, 22)),
+    calc(100vh / var(--grid-rows, 5))
+  );
 }
+
+/* Tile grid: 1fr fills board edge-to-edge */
+:fullscreen .tile-grid {
+  width: 100%;
+  height: 100%;
+  grid-template-columns: repeat(var(--grid-cols, 22), 1fr) !important;
+  grid-template-rows: repeat(var(--grid-rows, 5), 1fr) !important;
+  gap: 0 !important;
+  justify-content: stretch;
+  align-content: stretch;
+}
+
+/* Tiles: stretch to fill grid cell */
+:fullscreen .tile {
+  width: 100%;
+  height: 100%;
+}
+
+/* Font size scales with tile size */
+:fullscreen .tile-front span,
+:fullscreen .tile-back span {
+  font-size: calc(var(--tile-size) * 0.52);
+}
+
+/* Hide decorative elements */
+:fullscreen .accent-bar,
+:fullscreen .keyboard-hint {
+  display: none;
+}
+

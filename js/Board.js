@@ -1,13 +1,41 @@
 import { Tile } from './Tile.js';
 import {
-  GRID_COLS, GRID_ROWS, STAGGER_DELAY, SCRAMBLE_DURATION,
+  STAGGER_DELAY, SCRAMBLE_DURATION,
   TOTAL_TRANSITION, ACCENT_COLORS
 } from './constants.js';
 
 export class Board {
+  /** Returns the breakpoint tier string for the current viewport width. */
+  static getGridTier() {
+    if (document.fullscreenElement) return 'fullscreen';
+    const w = window.innerWidth;
+    if (w >= 900) return 'large';
+    if (w >= 601) return 'medium';
+    return 'small';
+  }
+
+  /** Returns {cols, rows} appropriate for the current viewport width. */
+  static getGridDimensions() {
+    if (document.fullscreenElement) {
+      const w = window.innerWidth, h = window.innerHeight;
+      // Cols by viewport width tier so lines have a comfortable reading length
+      const cols = w >= 1600 ? 22 : w >= 1100 ? 16 : w >= 700 ? 14 : 12;
+      // Derive square tile size from cols, then compute rows — cap at 8 so
+      // the content block always fills a large fraction of the screen
+      const tileSize = Math.floor(w / cols);
+      const rows = Math.min(8, Math.max(5, Math.floor(h / tileSize)));
+      return { cols, rows };
+    }
+    const w = window.innerWidth;
+    if (w >= 900) return { cols: 22, rows: 5 };
+    if (w >= 601) return { cols: 16, rows: 5 };
+    return { cols: 12, rows: 4 };
+  }
+
   constructor(containerEl, soundEngine) {
-    this.cols = GRID_COLS;
-    this.rows = GRID_ROWS;
+    const { cols, rows } = Board.getGridDimensions();
+    this.cols = cols;
+    this.rows = rows;
     this.soundEngine = soundEngine;
     this.isTransitioning = false;
     this.tiles = [];
@@ -138,8 +166,13 @@ export class Board {
 
   _formatToGrid(lines) {
     const grid = [];
+    // Vertically center the message block in the available rows
+    const vPad = Math.max(0, Math.floor((this.rows - lines.length) / 2));
     for (let r = 0; r < this.rows; r++) {
-      const line = (lines[r] || '').toUpperCase();
+      const lineIndex = r - vPad;
+      const line = (lineIndex >= 0 && lineIndex < lines.length ? lines[lineIndex] : '')
+        .toUpperCase()
+        .slice(0, this.cols);
       const padTotal = this.cols - line.length;
       const padLeft = Math.max(0, Math.floor(padTotal / 2));
       const padded = ' '.repeat(padLeft) + line + ' '.repeat(Math.max(0, this.cols - padLeft - line.length));
