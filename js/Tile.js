@@ -1,103 +1,124 @@
-import { CHARSET, SCRAMBLE_COLORS, SCRAMBLE_DURATION, FLIP_DURATION } from './constants.js';
-
 export class Tile {
   constructor(row, col) {
     this.row = row;
     this.col = col;
     this.currentChar = ' ';
-    this.isAnimating = false;
-    this._scrambleTimer = null;
+    this.animationToken = 0;
 
-    // Build DOM
     this.el = document.createElement('div');
     this.el.className = 'tile';
+    this.el.style.setProperty('--flip-duration', '135ms');
 
-    this.innerEl = document.createElement('div');
-    this.innerEl.className = 'tile-inner';
+    this.staticFace = this._buildFace('tile-static-face');
+    this.flapTop = this._buildHalf('tile-half tile-flap tile-flap-top');
+    this.flapBottom = this._buildHalf('tile-half tile-flap tile-flap-bottom');
 
-    this.frontEl = document.createElement('div');
-    this.frontEl.className = 'tile-front';
-    this.frontSpan = document.createElement('span');
-    this.frontEl.appendChild(this.frontSpan);
+    this.el.appendChild(this.staticFace.face);
+    this.el.appendChild(this.flapTop.half);
+    this.el.appendChild(this.flapBottom.half);
 
-    this.backEl = document.createElement('div');
-    this.backEl.className = 'tile-back';
-    this.backSpan = document.createElement('span');
-    this.backEl.appendChild(this.backSpan);
+    this.setChar(' ');
+  }
 
-    this.innerEl.appendChild(this.frontEl);
-    this.innerEl.appendChild(this.backEl);
-    this.el.appendChild(this.innerEl);
+  _buildFace(className) {
+    const face = document.createElement('div');
+    face.className = className;
+    const span = document.createElement('span');
+    span.className = 'tile-char';
+    face.appendChild(span);
+    return { face, span };
+  }
+
+  _buildHalf(className) {
+    const half = document.createElement('div');
+    half.className = className;
+    const span = document.createElement('span');
+    span.className = 'tile-char';
+    half.appendChild(span);
+    return { half, span };
   }
 
   setChar(char) {
     this.currentChar = char;
-    this.frontSpan.textContent = char === ' ' ? '' : char;
-    this.backSpan.textContent = '';
-    this.frontEl.style.backgroundColor = '';
+    this._setHalfText(this.staticFace.span, char);
+    this._setHalfText(this.flapTop.span, char);
+    this._setHalfText(this.flapBottom.span, char);
+    this.el.style.removeProperty('--tile-step-color');
   }
 
-  scrambleTo(targetChar, delay) {
-    if (targetChar === this.currentChar) return;
+  _setHalfText(span, char) {
+    span.textContent = char === ' ' ? '' : char;
+  }
 
-    // Cancel any in-progress animation
-    if (this._scrambleTimer) {
-      clearInterval(this._scrambleTimer);
-      this._scrambleTimer = null;
+  async flipThrough(sequence, options = {}) {
+    const {
+      delayMs = 0,
+      flipDurationMs = 135,
+      getStepColor = null,
+      onStepStart = null
+    } = options;
+
+    const token = ++this.animationToken;
+
+    await this._wait(delayMs);
+    if (token !== this.animationToken) {
+      return;
     }
-    this.isAnimating = true;
 
-    setTimeout(() => {
-      this.el.classList.add('scrambling');
-      let scrambleCount = 0;
-      const maxScrambles = 10 + Math.floor(Math.random() * 4);
-      const scrambleInterval = 70;
+    for (let index = 0; index < sequence.length; index += 1) {
+      const nextChar = sequence[index];
+      const color = typeof getStepColor === 'function' ? getStepColor(index) : '';
+      if (typeof onStepStart === 'function') {
+        onStepStart(nextChar, index);
+      }
+      await this._animateStep(nextChar, flipDurationMs, color, token);
+      if (token !== this.animationToken) {
+        return;
+      }
+    }
+  }
 
-      this._scrambleTimer = setInterval(() => {
-        // Random character
-        const randChar = CHARSET[Math.floor(Math.random() * CHARSET.length)];
-        this.frontSpan.textContent = randChar === ' ' ? '' : randChar;
+  async _animateStep(nextChar, flipDurationMs, color, token) {
+    if (token !== this.animationToken) {
+      return;
+    }
 
-        // Cycle background color
-        const color = SCRAMBLE_COLORS[scrambleCount % SCRAMBLE_COLORS.length];
-        this.frontEl.style.backgroundColor = color;
+    this.el.style.setProperty('--flip-duration', `${flipDurationMs}ms`);
+    if (color) {
+      this.el.style.setProperty('--tile-step-color', color);
+    } else {
+      this.el.style.removeProperty('--tile-step-color');
+    }
 
-        // Briefly change text color for contrast on light backgrounds
-        if (color === '#FFFFFF' || color === '#FFCC00') {
-          this.frontSpan.style.color = '#111';
-        } else {
-          this.frontSpan.style.color = '';
-        }
+    this._setHalfText(this.staticFace.span, this.currentChar);
+    this._setHalfText(this.flapTop.span, this.currentChar);
+    this._setHalfText(this.flapBottom.span, nextChar);
 
-        scrambleCount++;
+    this.el.classList.remove('flip-top-active', 'flip-bottom-active');
+    void this.el.offsetWidth;
+    this.el.classList.add('flip-top-active');
 
-        if (scrambleCount >= maxScrambles) {
-          clearInterval(this._scrambleTimer);
-          this._scrambleTimer = null;
+    await this._wait(Math.max(45, Math.floor(flipDurationMs / 2)));
+    if (token !== this.animationToken) {
+      return;
+    }
 
-          // Reset colors
-          this.frontEl.style.backgroundColor = '';
-          this.frontSpan.style.color = '';
+    this._setHalfText(this.staticFace.span, nextChar);
+    this.el.classList.remove('flip-top-active');
+    this.el.classList.add('flip-bottom-active');
 
-          // Set the final character directly (skip 3D flip for reliability)
-          // Use a brief opacity flash to simulate the flip settle
-          this.frontSpan.textContent = targetChar === ' ' ? '' : targetChar;
+    await this._wait(Math.max(45, Math.ceil(flipDurationMs / 2)));
+    if (token !== this.animationToken) {
+      return;
+    }
 
-          // Quick flash effect: brief scale transform
-          this.innerEl.style.transition = `transform ${FLIP_DURATION}ms ease-in-out`;
-          this.innerEl.style.transform = 'perspective(400px) rotateX(-8deg)';
+    this.el.classList.remove('flip-bottom-active');
+    this.currentChar = nextChar;
+  }
 
-          setTimeout(() => {
-            this.innerEl.style.transform = '';
-            setTimeout(() => {
-              this.innerEl.style.transition = '';
-              this.el.classList.remove('scrambling');
-              this.currentChar = targetChar;
-              this.isAnimating = false;
-            }, FLIP_DURATION);
-          }, FLIP_DURATION / 2);
-        }
-      }, scrambleInterval);
-    }, delay);
+  _wait(durationMs) {
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, durationMs);
+    });
   }
 }

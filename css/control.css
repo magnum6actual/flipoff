@@ -1,0 +1,176 @@
+.control-main {
+  padding: 28px 32px 40px;
+}
+
+.control-hero {
+  max-width: 820px;
+  margin-bottom: 24px;
+}
+
+.control-hero h1 {
+  font-size: 38px;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  margin-bottom: 12px;
+}
+
+.control-hero p {
+  color: #5C5C5C;
+  max-width: 720px;
+}
+
+.control-hero a {
+  color: inherit;
+  font-weight: 700;
+}
+
+.sync-note {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
+.sync-note.is-pending {
+  color: #8A5A00;
+}
+
+.sync-note.is-error {
+  color: #8C1F12;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.control-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+}
+
+.control-card-wide {
+  grid-column: 1 / -1;
+}
+
+.control-card h2 {
+  margin-bottom: 16px;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+
+.control-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4B4B4B;
+}
+
+.control-card input,
+.control-card textarea,
+.control-card select,
+.control-card button {
+  font: inherit;
+}
+
+.control-card input,
+.control-card textarea,
+.control-card select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #F8F7F3;
+  color: #111;
+}
+
+.control-card textarea {
+  resize: vertical;
+}
+
+.section-heading,
+.message-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.message-list {
+  display: grid;
+  gap: 16px;
+}
+
+.message-card {
+  padding: 16px;
+  border-radius: 14px;
+  background: #F8F7F3;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.message-card-header h3 {
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
+
+button,
+.ghost {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  padding: 11px 18px;
+  background: #111;
+  color: #FFF;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ghost {
+  background: rgba(17, 17, 17, 0.08);
+  color: #111;
+}
+
+.danger {
+  color: #8C1F12;
+  background: rgba(228, 76, 47, 0.14);
+}
+
+.checkbox-row {
+  flex-direction: row;
+  align-items: center;
+}
+
+.checkbox-row input {
+  width: auto;
+}
+
+.small-note {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6D6D6D;
+}
+
+@media (max-width: 900px) {
+  .control-main {
+    padding: 20px 16px 28px;
+  }
+
+  .control-grid {
+    grid-template-columns: 1fr;
+  }
+}

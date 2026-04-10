@@ -1,55 +1,35 @@
 /* Tile Wrapper */
 .tile {
+  position: relative;
   width: var(--tile-size);
   height: var(--tile-size);
   perspective: 400px;
   background: #111;
   border-radius: 3px;
+  overflow: hidden;
 }
 
-/* Inner Container (transform target) */
-.tile-inner {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-}
-
-/* Tile Faces */
-.tile-front,
-.tile-back {
+.tile-static-face,
+.tile-half {
   position: absolute;
   inset: 1px;
   backface-visibility: hidden;
   background: #222;
   border-radius: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   box-shadow:
     inset 0 1px 3px rgba(0, 0, 0, 0.5),
     inset 0 -1px 1px rgba(255, 255, 255, 0.02);
   overflow: hidden;
 }
 
-.tile-front span,
-.tile-back span {
-  font-size: calc(var(--tile-size) * 0.52);
-  font-weight: 700;
-  color: #FFFFFF;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  line-height: 1;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+.tile-static-face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.tile-back {
-  transform: rotateX(180deg);
-}
-
-/* Horizontal Split Line — subtle mechanical seam */
-.tile-front::after,
-.tile-back::after {
+.tile-static-face::after,
+.tile-half::after {
   content: '';
   position: absolute;
   left: 0;
@@ -60,9 +40,8 @@
   pointer-events: none;
 }
 
-/* Highlight Sweep (metallic reflection during flip) */
-.tile-front::before,
-.tile-back::before {
+.tile-static-face::before,
+.tile-half::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -79,30 +58,88 @@
   transition: opacity 0.15s;
 }
 
-/* 3D Flip Animation */
-.tile-inner.flipping {
-  animation: tileFlip var(--flip-duration, 300ms) ease-in-out forwards;
+.tile-half {
+  left: 1px;
+  right: 1px;
+  height: calc(50% - 1px);
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 3;
+  background: var(--tile-step-color, #222);
 }
 
-.tile-inner.flipping .tile-front::before,
-.tile-inner.flipping .tile-back::before {
+.tile-flap-top {
+  top: 1px;
+  transform-origin: bottom center;
+}
+
+.tile-flap-bottom {
+  bottom: 1px;
+  transform-origin: top center;
+}
+
+.tile-char {
+  font-size: calc(var(--tile-size) * 0.52);
+  font-weight: 700;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  font-family: 'Helvetica Neue', Helvetica, Arial, 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+  user-select: none;
+}
+
+.tile-static-face .tile-char {
+  position: static;
+}
+
+.tile-half .tile-char {
+  position: absolute;
+  left: 50%;
+}
+
+.tile-flap-top .tile-char {
+  top: 100%;
+  transform: translate(-50%, -50%);
+}
+
+.tile-flap-bottom .tile-char {
+  top: 0;
+  transform: translate(-50%, -50%);
+}
+
+.tile.flip-top-active .tile-flap-top,
+.tile.flip-bottom-active .tile-flap-bottom {
+  visibility: visible;
+}
+
+.tile.flip-top-active .tile-flap-top::before,
+.tile.flip-bottom-active .tile-flap-bottom::before {
   opacity: 1;
 }
 
-@keyframes tileFlip {
+.tile.flip-top-active .tile-flap-top {
+  animation: flapTop var(--flip-duration, 135ms) ease-in forwards;
+}
+
+.tile.flip-bottom-active .tile-flap-bottom {
+  animation: flapBottom var(--flip-duration, 135ms) ease-out forwards;
+}
+
+@keyframes flapTop {
   0% {
     transform: rotateX(0deg);
   }
-  50% {
-    transform: rotateX(-90deg);
-  }
   100% {
-    transform: rotateX(-180deg);
+    transform: rotateX(-90deg);
   }
 }
 
-/* GPU compositing hint during animation only */
-.tile-inner.flipping,
-.tile.scrambling .tile-inner {
-  will-change: transform;
+@keyframes flapBottom {
+  0% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
 }

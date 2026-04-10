@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111111">
+  <title>FlipOff Advanced Control</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/control.css">
+</head>
+<body class="control-body">
+  <div class="page-frame control-frame">
+    <header class="header control-header">
+      <div class="header-logo">FlipOff Control</div>
+      <nav class="header-nav">
+        <a href="message.html">Write Message</a>
+        <a href="index.html">Display</a>
+      </nav>
+    </header>
+
+    <main class="control-main">
+      <section class="control-hero">
+        <h1>Advanced board control.</h1>
+        <p>Use <a href="message.html">Write Message</a> for quick sends. This page keeps the full runtime editor for timing, colors, sound, message rotation, and remote config.</p>
+        <p class="sync-note" id="sync-note"></p>
+      </section>
+
+      <form id="control-form" class="control-grid">
+        <section class="control-card control-card-wide">
+          <div class="section-heading">
+            <h2>Messages</h2>
+            <button type="button" id="add-message-btn" class="ghost">Add message</button>
+          </div>
+          <div id="message-list" class="message-list"></div>
+        </section>
+
+        <section class="control-card">
+          <h2>Board</h2>
+          <label><span>Message interval (ms)</span><input name="intervalMs" type="number" min="1500" max="120000"></label>
+          <label><span>Columns</span><input name="cols" type="number" min="8" max="32"></label>
+          <label><span>Rows</span><input name="rows" type="number" min="1" max="8"></label>
+        </section>
+
+        <section class="control-card">
+          <h2>Timing</h2>
+          <label><span>Flip duration (ms)</span><input name="flipDurationMs" type="number" min="70" max="500"></label>
+          <label><span>Tile stagger (ms)</span><input name="staggerDelayMs" type="number" min="0" max="120"></label>
+          <label><span>Settle delay (ms)</span><input name="settleDelayMs" type="number" min="0" max="1500"></label>
+          <label><span>Max ordered steps</span><input name="maxOrderedSteps" type="number" min="2" max="40"></label>
+        </section>
+
+        <section class="control-card">
+          <h2>Theme</h2>
+          <label>
+            <span>Flip color style</span>
+            <select name="stepThemePreset">
+              <option value="flipoff">FlipOff Default</option>
+              <option value="terminal">Green Terminal</option>
+              <option value="sunset">Sunset Neon</option>
+              <option value="mono">Black And White</option>
+              <option value="arcade">Arcade Bright</option>
+            </select>
+          </label>
+          <label>
+            <span>Accent style</span>
+            <select name="accentThemePreset">
+              <option value="flipoff">FlipOff Default</option>
+              <option value="terminal">Green Terminal</option>
+              <option value="sunset">Sunset Neon</option>
+              <option value="mono">Black And White</option>
+              <option value="arcade">Arcade Bright</option>
+            </select>
+          </label>
+          <p class="small-note">Pick named themes instead of typing hex colors.</p>
+        </section>
+
+        <section class="control-card">
+          <h2>Sound</h2>
+          <label>
+            <span>Profile</span>
+            <select name="soundProfile">
+              <option value="soft">Soft</option>
+              <option value="authentic">Authentic</option>
+              <option value="joke">Joke</option>
+              <option value="mute">Mute</option>
+            </select>
+          </label>
+          <label><span>Volume</span><input name="volume" type="number" step="0.05" min="0" max="1"></label>
+        </section>
+
+        <section class="control-card control-card-wide">
+          <h2>Remote pull sync</h2>
+          <label class="checkbox-row"><input name="remoteEnabled" type="checkbox"><span>Enable remote config polling</span></label>
+          <label><span>Remote JSON URL</span><input name="remoteUrl" type="url" placeholder="https://example.com/flipoff.json"></label>
+          <label><span>Bearer token</span><input name="authToken" type="password" placeholder="Optional token"></label>
+          <label><span>Poll interval (ms)</span><input name="pollIntervalMs" type="number" min="5000" max="300000"></label>
+          <p class="small-note">Use HTTPS for public endpoints. HTTP is only accepted for localhost or private-network addresses.</p>
+        </section>
+
+        <section class="control-card control-card-wide action-bar">
+          <button type="button" id="apply-btn">Send To Board</button>
+          <button type="button" id="export-btn">Export JSON</button>
+          <button type="button" id="import-btn" class="ghost">Import JSON</button>
+          <button type="button" id="reset-btn" class="ghost danger">Reset defaults</button>
+          <input id="import-input" type="file" accept="application/json" hidden>
+        </section>
+      </form>
+    </main>
+  </div>
+
+  <script type="module" src="js/control.js"></script>
+</body>
+</html>

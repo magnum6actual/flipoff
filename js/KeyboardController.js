@@ -1,14 +1,14 @@
 export class KeyboardController {
-  constructor(rotator, soundEngine) {
+  constructor(rotator, soundEngine, onProfileChange = null) {
     this.rotator = rotator;
     this.soundEngine = soundEngine;
+    this.onProfileChange = onProfileChange;
 
     document.addEventListener('keydown', (e) => this._handleKey(e));
   }
 
   _handleKey(e) {
-    // Don't capture when typing in input fields
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (this._isTypingContext(e.target)) return;
 
     switch (e.key) {
       case 'Enter':
@@ -37,8 +37,12 @@ export class KeyboardController {
       case 'M':
         e.preventDefault();
         if (this.soundEngine) {
-          const muted = this.soundEngine.toggleMute();
-          this._showToast(muted ? 'Sound off' : 'Sound on');
+          const profile = this.soundEngine.cycleProfile();
+          const label = this.soundEngine.getProfileLabel();
+          if (typeof this.onProfileChange === 'function') {
+            this.onProfileChange(profile, label);
+          }
+          this._showToast(`Sound ${label}`);
         }
         break;
 
@@ -51,6 +55,14 @@ export class KeyboardController {
         if (overlay) overlay.classList.remove('visible');
         break;
     }
+  }
+
+  _isTypingContext(target) {
+    if (!target) {
+      return false;
+    }
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT' || target.isContentEditable;
   }
 
   _toggleFullscreen() {

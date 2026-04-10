@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#111111">
-  <title>FlipOff. — Free Split-Flap Display for Any TV</title>
+  <title>FlipOff. - Free Split-Flap Display for Any TV</title>
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/board.css">
@@ -12,15 +12,14 @@
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-
   <div class="page-frame">
-    <!-- Header -->
     <header class="header">
       <div class="header-logo">FlipOff.</div>
       <nav class="header-nav">
-        <a href="#features">Features</a>
-        <a href="#pricing">Pricing</a>
-        <button class="volume-icon" id="volume-btn" title="Toggle sound">
+        <a href="message.html">Write Message</a>
+        <a href="control.html">Control</a>
+        <a href="#board-container">Board</a>
+        <button class="volume-icon" id="volume-btn" title="Cycle sound mode">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
@@ -30,17 +29,16 @@
       </nav>
     </header>
 
-    <!-- Hero -->
     <section class="hero">
       <h1>Turn any TV into a retro split-flap display.</h1>
-      <p class="subtitle">The classic flip-board look, without the $3,500 hardware.</p>
+      <p class="subtitle">A static-first split-flap board with a dedicated message composer, runtime control, safe remote pull sync, and emoji-safe messaging.</p>
       <div class="hero-cta">
-        <input type="email" placeholder="you@example.com">
-        <button id="cta-btn">Get Early Access</button>
+        <a class="button-link" href="message.html">Write A Message</a>
+        <a class="button-link" href="control.html">Advanced Control</a>
+        <button id="cta-btn">Fullscreen Board</button>
       </div>
     </section>
 
-    <!-- Board -->
     <section class="board-section" id="board-container">
     </section>
   </div>
