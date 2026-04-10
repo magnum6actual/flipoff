@@ -1,86 +1,241 @@
-# FlipOff.
+# FlipOff
 
-**Turn any TV into a retro split-flap display.** The classic flip-board look, without the $3,500 hardware. And it's free.
+Static split-flap board for browsers, TVs, kiosks, and signage screens.
+
+FlipOff is a pure HTML/CSS/JavaScript app that renders a retro mechanical board effect without a build step or backend. The current version adds a dedicated message composer, an advanced control page, adaptive screen-proportion layout, and optional remote JSON polling for live updates.
 
 ![FlipOff Screenshot](screenshot.png)
 
-## What is this?
+## What This Version Includes
 
-FlipOff is a free, open-source web app that emulates a classic mechanical split-flap (flip-board) airport terminal display — the kind you'd see at train stations and airports. It runs full-screen in any browser, turning a TV or large monitor into a beautiful retro display.
+- Split-flap board display with staggered flip animation
+- Dedicated `message.html` page for quick live message sending
+- `control.html` page for runtime editing of messages, timing, sound, theme, and remote sync
+- Adaptive grid layout that changes with the screen proportion
+- Local live sync between tabs using `localStorage` and `BroadcastChannel`
+- Optional remote config polling from a JSON endpoint
+- Sound profiles: `soft`, `authentic`, `joke`, `mute`
+- Static-first setup with no npm, build tool, or server dependency beyond a simple static file host
 
-No accounts. No subscriptions. No $199 fee. Just open `index.html` and go.
+## Pages
 
-## Features
+- `index.html`: the display board
+- `message.html`: quick composer for sending one message to the board
+- `control.html`: advanced runtime control for the full config
 
-- Realistic split-flap animation with colorful scramble transitions
-- Authentic mechanical clacking sound (recorded from a real split-flap display)
-- Auto-rotating inspirational quotes
-- Fullscreen TV mode (press `F`)
-- Keyboard controls for manual navigation
-- Works offline — zero external dependencies
-- Responsive from mobile to 4K displays
-- Pure vanilla HTML/CSS/JS — no frameworks, no build tools, no npm
+## Tech Stack
 
-## Quick Start
+- HTML
+- CSS
+- Vanilla JavaScript with ES modules
+- Browser `localStorage` for runtime config persistence
+- Browser `BroadcastChannel` for cross-tab sync when available
+- `fetch()` for optional remote polling
 
-1. Clone the repo
-2. Open `index.html` in a browser (or serve with any static file server)
-3. Click anywhere to enable audio
-4. Press `F` for fullscreen TV mode
+## Getting Started
+
+### Option 1: Open Directly
+
+Open `index.html` in a browser.
+
+This works for the local runtime config features in many browsers, but a local static server is the safer option, especially when testing remote polling.
+
+### Option 2: Run a Static Server
+
+From the project directory:
 
 ```bash
-# Or serve locally:
-python3 -m http.server 8080
-# Then open http://localhost:8080
+python -m http.server 8091
 ```
+
+Then open:
+
+- `http://127.0.0.1:8091/index.html`
+- `http://127.0.0.1:8091/message.html`
+- `http://127.0.0.1:8091/control.html`
+
+## Typical Workflow
+
+1. Open `index.html` on the display screen.
+2. Open `message.html` in another tab or device using the same browser profile when testing locally.
+3. Type one line per board row and press `Send To Board`.
+4. Use `control.html` when you want to change timing, board size, sound mode, theme preset, message rotation, or remote sync.
 
 ## Keyboard Shortcuts
 
+On the display page:
+
 | Key | Action |
-|-----|--------|
+| --- | --- |
 | `Enter` / `Space` | Next message |
 | `Arrow Left` | Previous message |
 | `Arrow Right` | Next message |
 | `F` | Toggle fullscreen |
-| `M` | Toggle mute |
+| `M` | Cycle sound mode |
 | `Escape` | Exit fullscreen |
 
-## How It Works
+## Message Composer
 
-Each tile on the board is an independent element that can animate through a scramble sequence (rapid random characters with colored backgrounds) before settling on the final character. Only tiles whose content changes between messages animate — just like a real mechanical board.
+`message.html` is the fastest way to drive the board manually.
 
-The sound is a single recorded audio clip of a real split-flap transition, played once per message change to perfectly sync with the visual animation.
+- Type one line per row
+- Empty lines are ignored
+- The message is centered vertically on the current board row count
+- Sending a message replaces the active rotation with one live message
+- If remote polling is enabled, the local message can be overwritten on the next successful remote poll
 
-## File Structure
+## Advanced Control
 
+`control.html` edits the runtime config stored in the browser.
+
+It lets you change:
+
+- message interval
+- board columns and rows
+- flip timing and stagger behavior
+- sound profile and volume
+- named theme presets instead of raw hex colors
+- remote polling URL, token, and interval
+- full message rotation list
+
+Theme presets currently available:
+
+- `FlipOff Default`
+- `Green Terminal`
+- `Sunset Neon`
+- `Black And White`
+- `Arcade Bright`
+
+## Remote Config Polling
+
+The display page can periodically fetch a remote JSON file and use it as the active board config.
+
+Important behavior:
+
+- Remote overrides are applied on `index.html`
+- `message.html` and `control.html` edit the local config only
+- Remote config can replace local messages, grid settings, timing, theme, and sound
+- The local `remote` section itself is not replaced by the fetched payload
+
+### Supported Remote Sections
+
+The fetched JSON can provide:
+
+- `messages`
+- `grid`
+- `timing`
+- `theme`
+- `sound`
+
+### Remote URL Safety Rules
+
+- Public endpoints must use `https://`
+- Plain `http://` is accepted only for localhost or private-network addresses such as `127.0.0.1`, `192.168.x.x`, `10.x.x.x`, or `172.16.x.x` through `172.31.x.x`
+
+### Example Remote JSON
+
+```json
+{
+  "messages": {
+    "intervalMs": 5000,
+    "items": [
+      { "id": "live-1", "lines": ["WELCOME", "TO FLIPOFF"] },
+      { "id": "live-2", "lines": ["TRAIN A", "ON TIME"] }
+    ]
+  },
+  "grid": {
+    "cols": 24,
+    "rows": 4
+  },
+  "timing": {
+    "flipDurationMs": 120,
+    "staggerDelayMs": 18,
+    "settleDelayMs": 140,
+    "maxOrderedSteps": 18
+  },
+  "theme": {
+    "stepColors": ["#00AAFF", "#00FFCC", "#FFFFFF"],
+    "accentColors": ["#00FF7F", "#FF4D00"]
+  },
+  "sound": {
+    "profile": "soft",
+    "volume": 0.8
+  }
+}
 ```
+
+### How To Test Remote Polling
+
+1. Host a JSON file like the example above.
+2. Open `control.html`.
+3. Enable `Remote pull sync`.
+4. Enter the remote JSON URL.
+5. Optionally enter a bearer token.
+6. Set the polling interval.
+7. Keep `index.html` open and watch the board update when the JSON changes.
+
+## Adaptive Display Behavior
+
+The board no longer uses only one fixed grid shape. It starts from the configured `cols` and `rows`, then adjusts the active grid at runtime based on the viewport proportion.
+
+That means:
+
+- wider screens can use more columns
+- taller screens can use more rows
+- tile size is recalculated to fit the available space
+- resizing the browser or toggling fullscreen can rebuild the board layout while preserving the current message
+
+## Project Structure
+
+```text
 flipoff/
-  index.html           — Single-page app
+  index.html
+  message.html
+  control.html
+  README.md
+  screenshot.png
   css/
-    reset.css          — CSS reset
-    layout.css         — Page layout (header, hero, board)
-    board.css          — Board container and accent bars
-    tile.css           — Tile styling and 3D flip animation
-    responsive.css     — Media queries for all screen sizes
+    reset.css
+    layout.css
+    board.css
+    tile.css
+    responsive.css
+    control.css
+    message.css
   js/
-    main.js            — Entry point and UI wiring
-    Board.js           — Grid manager and transition orchestration
-    Tile.js            — Individual tile animation logic
-    SoundEngine.js     — Audio playback with Web Audio API
-    MessageRotator.js  — Quote rotation timer
-    KeyboardController.js — Keyboard shortcut handling
-    constants.js       — Configuration (grid size, colors, quotes)
-    flapAudio.js       — Embedded audio data (base64)
+    main.js
+    Board.js
+    Tile.js
+    SoundEngine.js
+    MessageRotator.js
+    KeyboardController.js
+    ConfigStore.js
+    configSchema.js
+    control.js
+    message.js
+    constants.js
+    flapAudio.js
+    text.js
 ```
 
-## Customization
+## Runtime Architecture
 
-Edit `js/constants.js` to change:
-- **Messages**: Add your own quotes or text
-- **Grid size**: Adjust `GRID_COLS` and `GRID_ROWS`
-- **Timing**: Tweak `SCRAMBLE_DURATION`, `STAGGER_DELAY`, etc.
-- **Colors**: Modify `SCRAMBLE_COLORS` and `ACCENT_COLORS`
+- `js/main.js` boots the display page and enables remote overrides
+- `js/Board.js` manages layout, adaptive sizing, tile orchestration, and display status
+- `js/Tile.js` handles individual split-flap tile transitions
+- `js/MessageRotator.js` rotates through configured messages
+- `js/SoundEngine.js` manages sound profiles and playback
+- `js/ConfigStore.js` handles local persistence, cross-tab sync, and remote polling
+- `js/configSchema.js` validates and sanitizes config payloads
+- `js/control.js` powers the advanced control page
+- `js/message.js` powers the quick-send composer
+
+## Notes
+
+- Audio usually requires a user interaction before the browser will play sound
+- Cross-tab live sync is best when the pages are opened in the same browser profile
+- If remote sync is enabled, local quick-send messages are temporary unless the remote payload matches them
 
 ## License
 
-MIT — do whatever you want with it.
+MIT
