@@ -7,7 +7,6 @@
   background: #1A1A1A;
   border-radius: 16px;
   padding: 28px 48px 40px;
-  width: 100%;
   box-shadow:
     0 -4px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -116,4 +115,54 @@
   height: 4px;
   border-radius: 2px;
   background: rgba(255, 255, 255, 0.15);
+}
+
+.hint-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hint-sound {
+  display: none;
+}
+
+.shortcuts-overlay {
+  min-width: 210px;
+}
+
+.shortcuts-overlay div {
+  align-items: center;
+  gap: 14px;
+}
+
+.shortcuts-overlay strong {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.shortcuts-overlay kbd {
+  margin-left: 0;
+}
+
+.remote-badge {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.remote-badge-ok {
+  background: rgba(0, 255, 140, 0.14);
+}
+
+.remote-badge-error {
+  background: rgba(255, 81, 47, 0.18);
 }

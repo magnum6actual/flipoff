@@ -1,54 +1,87 @@
-import { MESSAGES, MESSAGE_INTERVAL, TOTAL_TRANSITION } from './constants.js';
-
 export class MessageRotator {
   constructor(board) {
     this.board = board;
-    this.messages = MESSAGES;
+    this.messages = [];
+    this.intervalMs = 4000;
     this.currentIndex = -1;
     this._timer = null;
-    this._paused = false;
+    this._running = false;
+  }
+
+  applyConfig(config) {
+    this.messages = config.messages.items;
+    this.intervalMs = config.messages.intervalMs;
+
+    if (!this.messages.length) {
+      this.messages = [{ id: 'empty', lines: [''] }];
+    }
+
+    if (this.currentIndex >= this.messages.length) {
+      this.currentIndex = 0;
+    }
   }
 
   start() {
-    // Show first message immediately
-    this.next();
-
-    // Begin auto-rotation
-    this._timer = setInterval(() => {
-      if (!this._paused && !this.board.isTransitioning) {
-        this.next();
-      }
-    }, MESSAGE_INTERVAL + TOTAL_TRANSITION);
+    this._running = true;
+    if (this.currentIndex < 0) {
+      this.currentIndex = 0;
+    }
+    this.showCurrent();
   }
 
   stop() {
     if (this._timer) {
-      clearInterval(this._timer);
+      clearTimeout(this._timer);
       this._timer = null;
     }
+    this._running = false;
   }
 
-  next() {
-    this.currentIndex = (this.currentIndex + 1) % this.messages.length;
-    this.board.displayMessage(this.messages[this.currentIndex]);
-    this._resetAutoRotation();
-  }
-
-  prev() {
-    this.currentIndex = (this.currentIndex - 1 + this.messages.length) % this.messages.length;
-    this.board.displayMessage(this.messages[this.currentIndex]);
-    this._resetAutoRotation();
-  }
-
-  _resetAutoRotation() {
-    // Reset timer when user manually navigates
-    if (this._timer) {
-      clearInterval(this._timer);
-      this._timer = setInterval(() => {
-        if (!this._paused && !this.board.isTransitioning) {
-          this.next();
-        }
-      }, MESSAGE_INTERVAL + TOTAL_TRANSITION);
+  async showCurrent() {
+    if (!this.messages.length) {
+      return false;
     }
+
+    const message = this.messages[this.currentIndex];
+    const changed = await this.board.displayMessage(message.lines);
+    this._scheduleNext();
+    return changed;
+  }
+
+  async next() {
+    if (!this.messages.length) {
+      return false;
+    }
+    this.currentIndex = (this.currentIndex + 1) % this.messages.length;
+    return this.showCurrent();
+  }
+
+  async prev() {
+    if (!this.messages.length) {
+      return false;
+    }
+    this.currentIndex = (this.currentIndex - 1 + this.messages.length) % this.messages.length;
+    return this.showCurrent();
+  }
+
+  async refresh() {
+    if (this.currentIndex < 0) {
+      this.currentIndex = 0;
+    }
+    return this.showCurrent();
+  }
+
+  _scheduleNext() {
+    if (!this._running) {
+      return;
+    }
+
+    if (this._timer) {
+      clearTimeout(this._timer);
+    }
+
+    this._timer = setTimeout(() => {
+      this.next();
+    }, this.intervalMs);
   }
 }

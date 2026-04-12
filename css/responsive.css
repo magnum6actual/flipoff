@@ -115,6 +115,10 @@
     width: 100%;
   }
 
+  .button-link {
+    width: 100%;
+  }
+
   .accent-bar {
     display: none;
   }

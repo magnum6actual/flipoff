@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111111">
+  <title>FlipOff Message Composer</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/message.css">
+</head>
+<body class="composer-body">
+  <div class="page-frame composer-frame">
+    <header class="header composer-header">
+      <div class="header-logo">FlipOff Message</div>
+      <nav class="header-nav">
+        <a href="index.html">Display</a>
+        <a href="control.html">Advanced Control</a>
+      </nav>
+    </header>
+
+    <main class="composer-main">
+      <section class="composer-hero">
+        <p class="eyebrow">Quick send</p>
+        <h1>Write a message and push it to the board.</h1>
+        <p class="subtitle">One line per row. The board updates through the same local runtime sync as the control page, so open both pages in the same browser profile.</p>
+      </section>
+
+      <section class="composer-shell">
+        <div class="composer-card">
+          <div class="composer-toolbar">
+            <div>
+              <h2>Message</h2>
+              <p id="board-spec" class="helper-copy"></p>
+            </div>
+            <span id="line-count" class="line-count">0 lines</span>
+          </div>
+
+          <form id="composer-form" class="composer-form">
+            <label class="composer-label" for="message-input">Board text</label>
+            <textarea id="message-input" name="message" rows="10" placeholder="WELCOME&#10;TO FLIPOFF" spellcheck="false"></textarea>
+
+            <div class="composer-actions">
+              <button type="submit" id="send-btn">Send To Board</button>
+              <button type="button" id="clear-btn" class="ghost">Clear</button>
+            </div>
+          </form>
+        </div>
+
+        <aside class="composer-side">
+          <div class="composer-card side-card">
+            <h2>How it works</h2>
+            <p>The composer replaces the active board rotation with one live message so it stays on screen until you send another one or switch back in Advanced Control.</p>
+          </div>
+
+          <div class="composer-card side-card">
+            <h2>Status</h2>
+            <p id="send-status" class="status-copy">Ready.</p>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="js/message.js"></script>
+</body>
+</html>

@@ -93,6 +93,24 @@
   gap: 10px;
 }
 
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  background: #000;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.button-link:hover {
+  background: #222;
+}
+
 .hero-cta input {
   padding: 12px 18px;
   border: 1.5px solid #E0E0E0;
@@ -123,6 +141,18 @@
 
 .hero-cta button:hover {
   background: #222;
+}
+
+.control-body {
+  background: #ECE8E1;
+}
+
+.control-frame {
+  max-width: 1440px;
+}
+
+.control-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 /* Board Section */
